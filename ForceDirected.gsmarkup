@@ -15,28 +15,29 @@
               halign="expand" valign="expand" />
         <hbox>
           <label>Spring Force:</label>
-                  <label>0</label><slider id="springSlider"
+                                  <slider id="springSlider"
+                                          action="updateLabels:"
                                           min="0"
-                                          max="100"
-                                          target="#NSOwner"
-                                          action="applyForceDirected:"
-                                          /><label>100</label>
+                                          current="10"
+                                          max="100"/>
+                                  <label id="spring"/>
           <hspace/>
           <label>Charge Force:</label>
-                  <label>0</label><slider id="chargeSlider"
+                                  <slider id="chargeSlider"
+                                          action="updateLabels:"
                                           min="0"
-                                          max="100"
-                                          target="#NSOwner"
-                                          action="applyForceDirected:"
-                                          /><label>100</label>
+                                          current="5"
+                                          max="100"/>
+                                  <label id="charge"/>
           <hspace/>
           <label>Damping:</label>
-                  <label>0</label><slider id="dampingSlider"
+                                  <slider id="dampingSlider"
+                                          action="updateLabels:"
                                           min="0"
-                                          max="1"
-                                          target="#NSOwner"
-                                          action="applyForceDirected:"
-                                          /><label>1</label>
+                                          current="0.9"
+                                          max="1"/>
+                                  <label id="damping"/>
+          <button target="#NSOwner" action="applyForceDirected:" title="Go"/>
           <button target="#view" action="reset:" title="Reset Position"/>
         </hbox>
       </vbox>
@@ -48,6 +49,9 @@
     <outlet source="#NSOwner" target="#springSlider" key="springSlider" />
     <outlet source="#NSOwner" target="#chargeSlider" key="chargeSlider" />
     <outlet source="#NSOwner" target="#dampingSlider" key="dampingSlider" />
+    <outlet source="#NSOwner" target="#charge" key="charge" />
+    <outlet source="#NSOwner" target="#spring" key="spring" />
+    <outlet source="#NSOwner" target="#damping" key="damping" />
   </connectors>
 </gsmarkup>
 

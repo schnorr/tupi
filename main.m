@@ -33,9 +33,12 @@
   NSSlider *springSlider;
   NSSlider *chargeSlider;
   NSSlider *dampingSlider;
+
+  id spring, charge, damping;
 }
 - (void) initWithArgc: (int) c argv: (const char**) v;
 - (void) applicationDidFinishLaunching: (NSNotification *)not;
+- (void) updateLabels: (id) sender;
 - (void) applyForceDirected: (id) sender;
 @end
 
@@ -60,6 +63,14 @@
   [view setGVC: gvc];
   [view setGraph: graph];
   [view reset: self];
+  [self updateLabels: self];
+}
+
+- (void) updateLabels: (id) sender
+{
+  [spring setFloatValue: [springSlider floatValue]];
+  [charge setFloatValue: [chargeSlider floatValue]];
+  [damping setFloatValue: [dampingSlider floatValue]];
 }
 
 - (void) applyForceDirected: (id) sender
