@@ -29,10 +29,14 @@
 
   GVC_t *gvc;
   graph_t *graph;
+
+  NSSlider *springSlider;
+  NSSlider *chargeSlider;
+  NSSlider *dampingSlider;
 }
 - (void) initWithArgc: (int) c argv: (const char**) v;
 - (void) applicationDidFinishLaunching: (NSNotification *)not;
-- (void) loadFile: (NSString*) filename;
+- (void) applyForceDirected: (id) sender;
 @end
 
 @implementation MyDelegate : NSObject 
@@ -50,14 +54,19 @@
   gvParseArgs (gvc, argc, (char**)argv);
   graph = gvNextInputGraph(gvc);
   NSLog (@"layout...");
-  gvLayout (gvc, graph, "neato");
+//  gvLayout (gvc, graph, "neato");
+
   NSLog (@"DONE");
   [view setGVC: gvc];
   [view setGraph: graph];
+  [view reset: self];
 }
 
-- (void) loadFile: (NSString*) filename
+- (void) applyForceDirected: (id) sender
 {
+  [view applyForceDirectedWithSpring: [springSlider floatValue]
+                           andCharge: [chargeSlider floatValue]
+                          andDamping: [dampingSlider floatValue]];
 }
 @end
 
@@ -69,9 +78,6 @@ int main (int argc, const char **argv){
   MyDelegate *delegate = [MyDelegate new];
   [delegate initWithArgc: argc argv: argv];
   [app setDelegate: delegate];
-  if (argc == 2){
-    [delegate loadFile: [NSString stringWithFormat: @"%s", argv[1]]];
-  }
 
   //run the application
   [app run];

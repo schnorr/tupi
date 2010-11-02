@@ -30,6 +30,10 @@
 {
   NSPoint move; //for use in mouse(down|dragged)
 
+  id springSlider;
+  id chargeSlider;
+  id dampingSlider;
+
   //for screen transformation
   NSPoint translate;
   double ratio;
@@ -40,6 +44,10 @@
 - (NSAffineTransform*) transform;
 - (void) setGVC: (GVC_t *) g;
 - (void) setGraph: (graph_t *) g;
+- (void) reset: (id) sender;
+- (void) applyForceDirectedWithSpring: (float) spring
+                            andCharge: (float) charge
+                          andDamping: (float) damping;
 @end
 
 #endif

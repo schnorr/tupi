@@ -9,15 +9,45 @@
             width="500" height="300"
             title="Force Directed" 
             resizable="yes">
-    
+      <vbox halign="expand">    
         <view id="view"
               instanceOf="DrawView"
-              halign="expand" />
+              halign="expand" valign="expand" />
+        <hbox>
+          <label>Spring Force:</label>
+                  <label>0</label><slider id="springSlider"
+                                          min="0"
+                                          max="100"
+                                          target="#NSOwner"
+                                          action="applyForceDirected:"
+                                          /><label>100</label>
+          <hspace/>
+          <label>Charge Force:</label>
+                  <label>0</label><slider id="chargeSlider"
+                                          min="0"
+                                          max="100"
+                                          target="#NSOwner"
+                                          action="applyForceDirected:"
+                                          /><label>100</label>
+          <hspace/>
+          <label>Damping:</label>
+                  <label>0</label><slider id="dampingSlider"
+                                          min="0"
+                                          max="1"
+                                          target="#NSOwner"
+                                          action="applyForceDirected:"
+                                          /><label>1</label>
+          <button target="#view" action="reset:" title="Reset Position"/>
+        </hbox>
+      </vbox>
     </window>
   </objects>
 
   <connectors>
     <outlet source="#NSOwner" target="#view" key="view" />
+    <outlet source="#NSOwner" target="#springSlider" key="springSlider" />
+    <outlet source="#NSOwner" target="#chargeSlider" key="chargeSlider" />
+    <outlet source="#NSOwner" target="#dampingSlider" key="dampingSlider" />
   </connectors>
 </gsmarkup>
 

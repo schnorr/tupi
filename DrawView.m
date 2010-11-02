@@ -56,6 +56,9 @@
 {
   NSRect tela = [self bounds];
 
+  //set default line width based on ratio
+  [NSBezierPath setDefaultLineWidth: 1/ratio];
+
   //white fill on view
   [[NSColor whiteColor] set];
   NSRectFill(tela);
@@ -63,17 +66,33 @@
   NSAffineTransform* transform = [self transform];
   [transform concat];
 
-  NSRect r = NSMakeRect(0,0,10,10);
-  [[NSColor blueColor] set];
-  [NSBezierPath fillRect: r];
-
   if (gvc && graph){
     Agnode_t *node = agfstnode (graph);
     while (node){
       double x = ND_coord(node).x;
       double y = ND_coord(node).y;
+      NSLog (@"%s %f %f", node->name, x, y);
       NSRect r = NSMakeRect (x, y, 10, 10);
+      [[NSColor blueColor] set];
       [NSBezierPath fillRect: r];
+
+      Agedge_t *edge = agfstedge (graph, node);
+      while (edge){
+        NSPoint src, dst;
+        src.x = ND_coord(edge->head).x;
+        src.y = ND_coord(edge->head).y;
+       
+        dst.x = ND_coord(edge->tail).x;
+        dst.y = ND_coord(edge->tail).y;
+       
+        NSBezierPath *path = [NSBezierPath bezierPath];
+        [path moveToPoint: src];
+        [path lineToPoint: dst];
+        [path stroke];
+
+        edge = agnxtedge (graph, edge, node);
+      }
+
 
       node = agnxtnode (graph, node);
     }
@@ -81,6 +100,60 @@
 
   [transform invert];
   [transform concat];
+}
+
+- (void) reset: (id) sender
+{
+  NSLog (@"%s", __FUNCTION__);
+  Agnode_t *n1 = agfstnode (graph);
+  while (n1){
+    ND_coord(n1).x = drand48() * 300;
+    ND_coord(n1).y = drand48() * 300;
+    n1 = agnxtnode (graph, n1);
+  }
+  [self setNeedsDisplay: YES];
+}
+
+- (void) applyForceDirectedWithSpring: (float) spring
+                            andCharge: (float) charge
+                          andDamping: (float) damping
+{
+  NSLog (@"%s", __FUNCTION__);
+  Agnode_t *n1, *n2;
+  n1 = agfstnode (graph);
+  while (n1){
+    double n1dx = 0;
+    double n1dy = 0; 
+
+    n2 = agfstnode (graph);
+    while (n2){
+      double dx = ND_coord(n2).x - ND_coord(n1).x;
+      double dy = ND_coord(n2).y - ND_coord(n1).y;
+      double hypotenuse = hypot (dx, dy);
+      double force = 0;
+      if (n1 != n2){ 
+        if (agfindedge (graph, n1, n2)){
+          //connected
+          force = (hypotenuse - spring) / 2.0;
+        }else{
+          //NOT connected
+          force = - (100 / hypotenuse * hypotenuse) * charge;
+        }
+        dx /= hypotenuse;
+        dy /= hypotenuse;
+        dx *= force;
+        dy *= force;
+        n1dx += dx;
+        n1dy += dy;
+      }
+      n2 = agnxtnode (graph, n2);
+    }
+    ND_coord(n1).x += n1dx;
+    ND_coord(n1).y += n1dy;
+
+    n1 = agnxtnode (graph, n1);
+  }
+  [self setNeedsDisplay: YES];
 }
 
 - (BOOL)acceptsFirstResponder
@@ -244,6 +317,12 @@
 
 - (void)keyDown:(NSEvent *)theEvent
 {
+  [self forceDirectedWithSpring: 1
+                      andCharge: 1
+                     andDamping: 0.5];
+
+}
+
   if (([theEvent modifierFlags] | NSAlternateKeyMask) &&
     [theEvent keyCode] == 33){ //ALT + P
     [self printGraph];
