@@ -138,6 +138,7 @@
 
   // running sum of total kinetic energy over all particles
   NSPoint total_kinetic_energy = NSMakePoint (0,0);
+  NSPoint old_total_kinetic_energy = NSMakePoint (0,0);
   int i = 0;
   do {
     total_kinetic_energy = NSMakePoint(0,0);
@@ -145,7 +146,7 @@
     while (n1){
       // running sum of total force on this particular node
       NSPoint force = NSMakePoint (0, 0);
- 
+
       n2 = agfstnode (graph);
       while (n2){
         //distance between particles
@@ -154,10 +155,11 @@
         NSPoint dif = NSSubtractPoints (n1p, n2p);
         double distance = LMSDistanceBetweenPoints (n1p, n2p);
 
-        //calculate coulomb repulsion and hooke attraction
-        double coulomb_repulsion = 0;
-        double hooke_attraction = 0; 
         if (n1 != n2){
+          //calculate coulomb repulsion and hooke attraction
+          double coulomb_repulsion = 0;
+          double hooke_attraction = 0; 
+
           //coulomb_repulsion (k_e * (q1 * q2 / r*r))
           double coulomb_constant = 1;
           double r = distance;
@@ -167,15 +169,10 @@
  
           if (agfindedge (graph, n1, n2)){
             //hooke_attraction (-k * x)
-            double k = spring;
-            double x = distance;
-            hooke_attraction = distance / 1 / spring;//-k * x;
+            hooke_attraction = 1 - (fabs (distance - spring) / spring);
           }
-
-          force = NSSubtractPoints (force, LMSMultiplyPoint (force, coulomb_repulsion));
-          force = NSSubtractPoints (force, LMSMultiplyPoint (LMSNormalizePoint(dif), hooke_attraction));
-
-          NSLog (@"%s,%s rep=%f atr=%f force=%@", n1->name, n2->name, coulomb_repulsion, hooke_attraction, NSStringFromPoint(force));
+          force = NSAddPoints (force, LMSMultiplyPoint (LMSNormalizePoint(dif), coulomb_repulsion));
+          force = NSAddPoints (force, LMSMultiplyPoint (LMSNormalizePoint(dif), hooke_attraction));
         }
         n2 = agnxtnode (graph, n2);
       }
@@ -186,44 +183,19 @@
       ND_coord(n1).x = ND_coord(n1).x + velocity.x;
       ND_coord(n1).y = ND_coord(n1).y + velocity.y;
 
+      //save velocity?
+
       total_kinetic_energy = NSAddPoints (total_kinetic_energy, velocity); 
 
       n1 = agnxtnode (graph, n1);
     }
     NSLog (@"total_kinetic_energy = %@",  NSStringFromPoint(total_kinetic_energy));
     i++;
-  }while (total_kinetic_energy.x > 1 && i < 1000);
 
+    if (NSEqualPoints (old_total_kinetic_energy, total_kinetic_energy)) break;
 
-
-
-/*
-      double force = 0;
-      if (n1 != n2){ 
-        if (agfindedge (graph, n1, n2)){
-          //connected
-          force = hypotenuse - spring;
-        }else{
-          //NOT connected
-          force = - (100 / hypotenuse * hypotenuse) * charge;
-        }
-        dx /= hypotenuse;
-        dy /= hypotenuse;
-        dx *= force;
-        dy *= force;
-        NSLog (@"\t %s %f %f", n2->name, hypotenuse, force);
-        n1dx += dx;
-        n1dy += dy;
-      }
-      n2 = agnxtnode (graph, n2);
-    }
-    NSLog (@"E %s - %f %f", n1->name, n1dx, n1dy);
-    ND_coord(n1).x += n1dx;
-    ND_coord(n1).y += n1dy;
-
-    n1 = agnxtnode (graph, n1);
-  }
-*/
+    old_total_kinetic_energy = total_kinetic_energy;
+  }while (total_kinetic_energy.x > 0.1);// && i < 1000);
   [self setNeedsDisplay: YES];
 }
 
