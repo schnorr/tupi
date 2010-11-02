@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE gsmarkup>
+
+<gsmarkup>
+
+  <objects>
+
+    <window autosaveName="ForceDirectedWindow"
+            width="500" height="300"
+            title="Force Directed" 
+            resizable="yes">
+    
+        <view id="view"
+              instanceOf="DrawView"
+              halign="expand" />
+    </window>
+  </objects>
+
+  <connectors>
+    <outlet source="#NSOwner" target="#view" key="view" />
+  </connectors>
+</gsmarkup>
+
