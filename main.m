@@ -17,20 +17,43 @@
 #include <Foundation/Foundation.h>
 #include <AppKit/AppKit.h>
 #include <Renaissance/Renaissance.h>
+#include <graphviz/gvc.h>
+#include "DrawView.h"
 
 @interface MyDelegate : NSObject
 {
   id view;
+
+  int argc;
+  char **argv;
+
+  GVC_t *gvc;
+  graph_t *graph;
 }
+- (void) initWithArgc: (int) c argv: (const char**) v;
 - (void) applicationDidFinishLaunching: (NSNotification *)not;
 - (void) loadFile: (NSString*) filename;
 @end
 
 @implementation MyDelegate : NSObject 
+- (void) initWithArgc: (int) c argv: (const char**) v
+{
+  argc = c;
+  argv = v; 
+}
+
 - (void) applicationDidFinishLaunching: (NSNotification *)not;
 {
   [NSBundle loadGSMarkupNamed: @"ForceDirected"  owner: self];
-  NSLog (@"%@", view);
+
+  gvc = gvContext();
+  gvParseArgs (gvc, argc, (char**)argv);
+  graph = gvNextInputGraph(gvc);
+  NSLog (@"layout...");
+  gvLayout (gvc, graph, "neato");
+  NSLog (@"DONE");
+  [view setGVC: gvc];
+  [view setGraph: graph];
 }
 
 - (void) loadFile: (NSString*) filename
@@ -44,6 +67,7 @@ int main (int argc, const char **argv){
   //appkit init
   NSApplication *app = [NSApplication sharedApplication];
   MyDelegate *delegate = [MyDelegate new];
+  [delegate initWithArgc: argc argv: argv];
   [app setDelegate: delegate];
   if (argc == 2){
     [delegate loadFile: [NSString stringWithFormat: @"%s", argv[1]]];

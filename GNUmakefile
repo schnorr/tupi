@@ -11,4 +11,6 @@ else
   ADDITIONAL_GUI_LIBS += -lRenaissance
 endif
 
+ForceDirected_LDFLAGS += -lgvc
+
 include $(GNUSTEP_MAKEFILES)/application.make

@@ -18,10 +18,28 @@
 #define __DrawView_h
 
 #include <AppKit/AppKit.h>
+#include <graphviz/gvc.h>
+
+//for compatibility with some graphviz's
+//installations (ubuntu's lucid, for example)
+#ifndef ND_coord
+#define ND_coord ND_coord_i
+#endif
 
 @interface DrawView : NSView
 {
+  NSPoint move; //for use in mouse(down|dragged)
+
+  //for screen transformation
+  NSPoint translate;
+  double ratio;
+
+  GVC_t *gvc;
+  graph_t *graph;
 }
+- (NSAffineTransform*) transform;
+- (void) setGVC: (GVC_t *) g;
+- (void) setGraph: (graph_t *) g;
 @end
 
 #endif

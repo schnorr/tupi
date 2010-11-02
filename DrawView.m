@@ -17,12 +17,34 @@
 /* All Rights reserved */
 
 #include "DrawView.h"
+#include "NSPointFunctions.h"
 
 @implementation DrawView
 - (id) initWithFrame: (NSRect) frame
 {
   self = [super initWithFrame: frame];
+  gvc = NULL;
+  graph = NULL;
+  ratio = 1;
   return self;
+}
+
+- (void) setGVC: (GVC_t *) g
+{
+  gvc = g;
+}
+
+- (void) setGraph: (graph_t *) g
+{
+  graph = g;
+}
+
+- (NSAffineTransform*) transform
+{
+  NSAffineTransform* transform = [NSAffineTransform transform];
+  [transform translateXBy: translate.x yBy: translate.y];
+  [transform scaleXBy: ratio yBy: ratio];
+  return transform;
 }
 
 - (BOOL) isFlipped
@@ -38,6 +60,27 @@
   [[NSColor whiteColor] set];
   NSRectFill(tela);
 
+  NSAffineTransform* transform = [self transform];
+  [transform concat];
+
+  NSRect r = NSMakeRect(0,0,10,10);
+  [[NSColor blueColor] set];
+  [NSBezierPath fillRect: r];
+
+  if (gvc && graph){
+    Agnode_t *node = agfstnode (graph);
+    while (node){
+      double x = ND_coord(node).x;
+      double y = ND_coord(node).y;
+      NSRect r = NSMakeRect (x, y, 10, 10);
+      [NSBezierPath fillRect: r];
+
+      node = agnxtnode (graph, node);
+    }
+  }
+
+  [transform invert];
+  [transform concat];
 }
 
 - (BOOL)acceptsFirstResponder
@@ -51,97 +94,29 @@
     return YES;
 }
 
-/*
 - (void) mouseDragged:(NSEvent *)event
 {
   NSPoint p;
   p = [self convertPoint:[event locationInWindow] fromView:nil];
 
-  if (selectingArea){
-    NSAffineTransform *t = [self transform];
-    [t invert];
-    NSPoint b = [t transformPoint: p];
-    NSPoint a = selectedArea.origin;
- 
-    NSPoint origin, diagonal;
-    NSSize size;
- 
-    if (b.x == a.x || b.y == a.y) return;
- 
-    if (b.x > a.x && b.y > a.y) {
-      //top right
-      origin = a;
-      diagonal = b;
-    } else if (b.x < a.x && b.y < a.y) {
-      //bottom left
-      origin = b;
-      diagonal = NSMakePoint(a.x+selectedArea.size.width, a.y+selectedArea.size.height);
-    } else if (b.x > a.x && b.y < a.y){
-      //bottom right
-      origin = NSMakePoint (a.x, b.y);
-      diagonal = NSMakePoint (b.x, a.y + selectedArea.size.height);
-    } else if (b.x < a.x && b.y > a.y) {
-      //top left
-      origin = NSMakePoint (b.x, a.y);
-      diagonal = NSMakePoint (a.x + selectedArea.size.width, b.y);
-    }
- 
-    size.width = diagonal.x - origin.x;
-    size.height = diagonal.y - origin.y;
- 
-    selectedArea.origin = origin;
-    selectedArea.size = size;
- 
-    [self setNeedsDisplay: YES];
-  }
-
-  if (movingSingleNode){
-    //code for changing the position of a node
-    if (selectedNode == nil) {
-      return;
-    }
-
-    NSAffineTransform *t = [self transform];
-    [t invert];
-    NSPoint p2 = [t transformPoint: p];
-
-    NSRect nodebb = [selectedNode bb];
-    nodebb.origin.x = p2.x - nodebb.size.width/2;
-    nodebb.origin.y = p2.y - nodebb.size.height/2;
-    [selectedNode setBoundingBox: nodebb];
+  NSPoint dif;
+  dif = NSSubtractPoints (p, move);
+  if (NSEqualPoints (translate, NSZeroPoint)){
+    translate = dif;
   }else{
-    NSPoint dif;
-    dif = NSSubtractPoints (p, move);
-    if (NSEqualPoints (translate, NSZeroPoint)){
-      translate = dif;
-    }else{
-      translate = NSAddPoints (translate, dif);
-    }
-    move = p;
+    translate = NSAddPoints (translate, dif);
   }
+  move = p;
+  
   [self setNeedsDisplay: YES];
 }
 
 - (void) mouseDown: (NSEvent *) event
 {
   move = [self convertPoint:[event locationInWindow] fromView:nil];
-
-  if ([event modifierFlags] & NSControlKeyMask){
-    if (selectedNode != nil){
-      //moving a single node
-      movingSingleNode = YES;
-    }else{
-      //selecting area
-      selectingArea = YES;
-      NSAffineTransform *t = [self transform];
-      [t invert];
-      NSPoint pt = [t transformPoint: move];
-      selectedArea.origin = pt;
-      selectedArea.size = NSZeroSize;
-    }
-  }
 }
 
+/*
 - (void) mouseUp: (NSEvent *) event
 {
   if (selectingArea){
@@ -220,47 +195,38 @@
     }
   }
 }
+*/
 
 - (void)scrollWheel:(NSEvent *)event
 {
-  if (([event modifierFlags] & NSControlKeyMask)){
-    //change the scale of the drawing (used by GraphConfiguration filter)
-    if ([event deltaY] > 0){
-      scale += scale*0.1;
-    }else{
-      scale -= scale*0.1;
-    }
-    [filter graphComponentScalingChanged];
+  NSPoint screenPositionAfter, screenPositionBefore, graphPoint;
+  NSAffineTransform *t;
+
+  screenPositionBefore = [self convertPoint: [event locationInWindow]
+                                   fromView: nil];
+  t = [self transform];
+  [t invert];
+  graphPoint = [t transformPoint: screenPositionBefore];
+
+  //updating the ratio considering 10% of its value 
+  if ([event deltaY] > 0){
+    ratio += ratio*0.1;
   }else{
-    NSPoint screenPositionAfter, screenPositionBefore, graphPoint;
-    NSAffineTransform *t;
-
-    screenPositionBefore = [self convertPoint: [event locationInWindow]
-                                     fromView: nil];
-    t = [self transform];
-    [t invert];
-    graphPoint = [t transformPoint: screenPositionBefore];
-
-    //updating the ratio considering 10% of its value 
-    if ([event deltaY] > 0){
-      ratio += ratio*0.1;
-    }else{
-      ratio -= ratio*0.1;
-    }
-
-    t = [self transform];
-    screenPositionAfter = [t transformPoint: graphPoint];
-
-    //update translate to compensate change on scale
-    translate = NSAddPoints (translate,
-                    NSSubtractPoints (screenPositionBefore, screenPositionAfter));
-
-    [self setNeedsDisplay: YES];
-    return;
+    ratio -= ratio*0.1;
   }
+
+  t = [self transform];
+  screenPositionAfter = [t transformPoint: graphPoint];
+
+  //update translate to compensate change on scale
+  translate = NSAddPoints (translate,
+                  NSSubtractPoints (screenPositionBefore, screenPositionAfter));
+
   [self setNeedsDisplay: YES];
+  return;
 }
 
+/*
 - (void) printGraph
 {
   static int counter = 0;
