@@ -75,6 +75,8 @@
       NSRect r = NSMakeRect (x, y, 10, 10);
       [[NSColor blueColor] set];
       [NSBezierPath fillRect: r];
+      [[NSString stringWithFormat: @"%s", node->name] drawAtPoint: NSMakePoint(x+10,y+10)
+                    withAttributes: nil];
 
       Agedge_t *edge = agfstedge (graph, node);
       while (edge){
@@ -118,23 +120,89 @@
                             andCharge: (float) charge
                           andDamping: (float) damping
 {
-  NSLog (@"%s", __FUNCTION__);
   Agnode_t *n1, *n2;
+
+//  spring = 1;
+//  charge = 10;
+//  damping = 0.2;
+  NSLog (@"%s spring = %f charge = %f damping = %f", __FUNCTION__,
+      spring, charge, damping);
+
+  // set up initial node velocities to (0,0)
   n1 = agfstnode (graph);
   while (n1){
-    double n1dx = 0;
-    double n1dy = 0; 
+    agsafeset (n1, "dx", "0", "0");
+    agsafeset (n1, "dy", "0", "0");
+    n1 = agnxtnode (graph, n1);
+  }
 
-    n2 = agfstnode (graph);
-    while (n2){
-      double dx = ND_coord(n2).x - ND_coord(n1).x;
-      double dy = ND_coord(n2).y - ND_coord(n1).y;
-      double hypotenuse = hypot (dx, dy);
+  // running sum of total kinetic energy over all particles
+  NSPoint total_kinetic_energy = NSMakePoint (0,0);
+  int i = 0;
+  do {
+    total_kinetic_energy = NSMakePoint(0,0);
+    n1 = agfstnode (graph);
+    while (n1){
+      // running sum of total force on this particular node
+      NSPoint force = NSMakePoint (0, 0);
+ 
+      n2 = agfstnode (graph);
+      while (n2){
+        //distance between particles
+        NSPoint n1p = NSMakePoint (ND_coord(n1).x, ND_coord(n1).y);
+        NSPoint n2p = NSMakePoint (ND_coord(n2).x, ND_coord(n2).y);
+        NSPoint dif = NSSubtractPoints (n1p, n2p);
+        double distance = LMSDistanceBetweenPoints (n1p, n2p);
+
+        //calculate coulomb repulsion and hooke attraction
+        double coulomb_repulsion = 0;
+        double hooke_attraction = 0; 
+        if (n1 != n2){
+          //coulomb_repulsion (k_e * (q1 * q2 / r*r))
+          double coulomb_constant = 1;
+          double r = distance;
+          double q1 = charge;
+          double q2 = charge;
+          coulomb_repulsion = coulomb_constant * (q1*q2)/(r*r);
+ 
+          if (agfindedge (graph, n1, n2)){
+            //hooke_attraction (-k * x)
+            double k = spring;
+            double x = distance;
+            hooke_attraction = distance / 1 / spring;//-k * x;
+          }
+
+          force = NSSubtractPoints (force, LMSMultiplyPoint (force, coulomb_repulsion));
+          force = NSSubtractPoints (force, LMSMultiplyPoint (LMSNormalizePoint(dif), hooke_attraction));
+
+          NSLog (@"%s,%s rep=%f atr=%f force=%@", n1->name, n2->name, coulomb_repulsion, hooke_attraction, NSStringFromPoint(force));
+        }
+        n2 = agnxtnode (graph, n2);
+      }
+      NSPoint velocity = NSMakePoint (atof(agget (n1, "dx")), atof(agget (n1, "dy")));
+      velocity = NSAddPoints (velocity, force);
+      velocity = LMSMultiplyPoint (velocity, damping);
+
+      ND_coord(n1).x = ND_coord(n1).x + velocity.x;
+      ND_coord(n1).y = ND_coord(n1).y + velocity.y;
+
+      total_kinetic_energy = NSAddPoints (total_kinetic_energy, velocity); 
+
+      n1 = agnxtnode (graph, n1);
+    }
+    NSLog (@"total_kinetic_energy = %@",  NSStringFromPoint(total_kinetic_energy));
+    i++;
+  }while (total_kinetic_energy.x > 1 && i < 1000);
+
+
+
+
+/*
       double force = 0;
       if (n1 != n2){ 
         if (agfindedge (graph, n1, n2)){
           //connected
-          force = (hypotenuse - spring) / 2.0;
+          force = hypotenuse - spring;
         }else{
           //NOT connected
           force = - (100 / hypotenuse * hypotenuse) * charge;
@@ -143,16 +211,19 @@
         dy /= hypotenuse;
         dx *= force;
         dy *= force;
+        NSLog (@"\t %s %f %f", n2->name, hypotenuse, force);
         n1dx += dx;
         n1dy += dy;
       }
       n2 = agnxtnode (graph, n2);
     }
+    NSLog (@"E %s - %f %f", n1->name, n1dx, n1dy);
     ND_coord(n1).x += n1dx;
     ND_coord(n1).y += n1dy;
 
     n1 = agnxtnode (graph, n1);
   }
+*/
   [self setNeedsDisplay: YES];
 }
 
