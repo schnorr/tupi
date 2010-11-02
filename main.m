@@ -71,6 +71,7 @@
   [spring setFloatValue: [springSlider floatValue]];
   [charge setFloatValue: [chargeSlider floatValue]];
   [damping setFloatValue: [dampingSlider floatValue]];
+  [self applyForceDirected: self];
 }
 
 - (void) applyForceDirected: (id) sender
