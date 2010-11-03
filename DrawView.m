@@ -189,13 +189,13 @@
 
       n1 = agnxtnode (graph, n1);
     }
-    NSLog (@"total_kinetic_energy = %@",  NSStringFromPoint(total_kinetic_energy));
-    i++;
 
+    NSLog (@"total_kinetic_energy = %@, old = %@",  NSStringFromPoint(total_kinetic_energy), NSStringFromPoint(old_total_kinetic_energy));
     if (NSEqualPoints (old_total_kinetic_energy, total_kinetic_energy)) break;
 
     old_total_kinetic_energy = total_kinetic_energy;
-  }while (total_kinetic_energy.x > 0.1);// && i < 1000);
+    i++;
+  }while (fabs(total_kinetic_energy.x + total_kinetic_energy.y) > 0.001);// && i < 1000);
   [self setNeedsDisplay: YES];
 }
 
