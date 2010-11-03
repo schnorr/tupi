@@ -1,0 +1,8 @@
+ForceDirected
+=============
+
+Program released under the GPLv3 license to calculate graph node positions
+based on Hooke Attraction's Law and Coulomb Repultion's Law. User can specify
+the size of the spring used in the experiment, and the amount of positive
+charge for each particle. The damping parameter helps the algorithm to stop,
+otherwise it will run forever.
