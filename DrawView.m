@@ -115,17 +115,11 @@
   [self setNeedsDisplay: YES];
 }
 
-- (void) applyForceDirectedWithSpring: (float) spring
+- (double) applyForceDirectedWithSpring: (float) spring
                             andCharge: (float) charge
                           andDamping: (float) damping
 {
   Agnode_t *n1, *n2;
-
-//  spring = 1;
-//  charge = 10;
-//  damping = 0.2;
-  NSLog (@"%s spring = %f charge = %f damping = %f", __FUNCTION__,
-      spring, charge, damping);
 
   // set up initial node velocities to (0,0)
   n1 = agfstnode (graph);
@@ -137,9 +131,9 @@
 
   // running sum of total kinetic energy over all particles
   NSPoint total_kinetic_energy = NSMakePoint (0,0);
-  NSPoint old_total_kinetic_energy = NSMakePoint (0,0);
+//  NSPoint old_total_kinetic_energy = NSMakePoint (0,0);
   int i = 0;
-  do {
+//  do {
     total_kinetic_energy = NSMakePoint(0,0);
     n1 = agfstnode (graph);
     while (n1){
@@ -189,13 +183,16 @@
       n1 = agnxtnode (graph, n1);
     }
 
-    NSLog (@"total_kinetic_energy = %@, old = %@",  NSStringFromPoint(total_kinetic_energy), NSStringFromPoint(old_total_kinetic_energy));
-    if (NSEqualPoints (old_total_kinetic_energy, total_kinetic_energy)) break;
+//    NSLog (@"total_kinetic_energy = %@, old = %@",  NSStringFromPoint(total_kinetic_energy), NSStringFromPoint(old_total_kinetic_energy));
+//    if (NSEqualPoints (old_total_kinetic_energy, total_kinetic_energy)) break;
 
-    old_total_kinetic_energy = total_kinetic_energy;
+ //   old_total_kinetic_energy = total_kinetic_energy;
     i++;
-  }while (fabs(total_kinetic_energy.x + total_kinetic_energy.y) > 0.001);// && i < 1000);
-  [self setNeedsDisplay: YES];
+
+    [self setNeedsDisplay: YES];
+    return fabs(total_kinetic_energy.x) + fabs(total_kinetic_energy.y);
+
+//  }while (fabs(total_kinetic_energy.x + total_kinetic_energy.y) > 0.001);// && i < 1000);
 }
 
 - (BOOL)acceptsFirstResponder

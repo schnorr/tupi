@@ -38,6 +38,7 @@
   NSPoint translate;
   double ratio;
 
+  //to keep graph info
   GVC_t *gvc;
   graph_t *graph;
 }
@@ -45,9 +46,9 @@
 - (void) setGVC: (GVC_t *) g;
 - (void) setGraph: (graph_t *) g;
 - (void) reset: (id) sender;
-- (void) applyForceDirectedWithSpring: (float) spring
-                            andCharge: (float) charge
-                          andDamping: (float) damping;
+- (double) applyForceDirectedWithSpring: (float) spring
+                              andCharge: (float) charge
+                             andDamping: (float) damping;
 @end
 
 #endif

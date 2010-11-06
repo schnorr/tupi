@@ -18,17 +18,17 @@
                                   <slider id="springSlider"
                                           action="updateLabels:"
                                           min="0"
-                                          current="10"
+                                          current="100"
                                           max="100"/>
-                                  <label id="spring"/>
+                                  <label id="springLabel"/>
           <hspace/>
           <label>Charge</label>
                                   <slider id="chargeSlider"
                                           action="updateLabels:"
                                           min="0"
-                                          current="5"
+                                          current="100"
                                           max="100"/>
-                                  <label id="charge"/>
+                                  <label id="chargeLabel"/>
           <hspace/>
           <label>Damping</label>
                                   <slider id="dampingSlider"
@@ -36,7 +36,7 @@
                                           min="0"
                                           current="0.9"
                                           max="1"/>
-                                  <label id="damping"/>
+                                  <label id="dampingLabel"/>
           <button target="#NSOwner" action="applyForceDirected:" title="Go"/>
           <button target="#view" action="reset:" title="Reset Position"/>
         </hbox>
@@ -49,9 +49,9 @@
     <outlet source="#NSOwner" target="#springSlider" key="springSlider" />
     <outlet source="#NSOwner" target="#chargeSlider" key="chargeSlider" />
     <outlet source="#NSOwner" target="#dampingSlider" key="dampingSlider" />
-    <outlet source="#NSOwner" target="#charge" key="charge" />
-    <outlet source="#NSOwner" target="#spring" key="spring" />
-    <outlet source="#NSOwner" target="#damping" key="damping" />
+    <outlet source="#NSOwner" target="#chargeLabel" key="chargeLabel" />
+    <outlet source="#NSOwner" target="#springLabel" key="springLabel" />
+    <outlet source="#NSOwner" target="#dampingLabel" key="dampingLabel" />
   </connectors>
 </gsmarkup>
 

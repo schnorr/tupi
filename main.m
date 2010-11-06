@@ -34,7 +34,12 @@
   NSSlider *chargeSlider;
   NSSlider *dampingSlider;
 
-  id spring, charge, damping;
+  NSTextField *springLabel;
+  NSTextField *chargeLabel;
+  NSTextField *dampingLabel;
+  
+  //for animation
+  NSTimer *timer;
 }
 - (void) initWithArgc: (int) c argv: (char**) v;
 - (void) applicationDidFinishLaunching: (NSNotification *)not;
@@ -47,6 +52,7 @@
 {
   argc = c;
   argv = v; 
+  timer = nil;
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)not;
@@ -65,16 +71,33 @@
 
 - (void) updateLabels: (id) sender
 {
-  [spring setFloatValue: [springSlider floatValue]];
-  [charge setFloatValue: [chargeSlider floatValue]];
-  [damping setFloatValue: [dampingSlider floatValue]];
+  [springLabel setFloatValue: [springSlider floatValue]];
+  [chargeLabel setFloatValue: [chargeSlider floatValue]];
+  [dampingLabel setFloatValue: [dampingSlider floatValue]];
 }
 
 - (void) applyForceDirected: (id) sender
 {
-  [view applyForceDirectedWithSpring: [springSlider floatValue]
-                           andCharge: [chargeSlider floatValue]
-                          andDamping: [dampingSlider floatValue]];
+  double spring = [springSlider floatValue];
+  double charge = [chargeSlider floatValue];
+  double damping = [dampingSlider floatValue];
+  double kinetic_energy = [view applyForceDirectedWithSpring: spring
+                                                   andCharge: charge
+                                                  andDamping: damping];
+  [timer invalidate];
+  if (kinetic_energy < 0.001){
+    timer = [NSTimer scheduledTimerWithTimeInterval: 2
+                                    target: self
+                                  selector: @selector(applyForceDirected:)
+                                  userInfo: nil
+                                   repeats: YES];
+  }else{
+    timer = [NSTimer scheduledTimerWithTimeInterval: 0.05
+                                    target: self
+                                  selector: @selector(applyForceDirected:)
+                                  userInfo: nil
+                                   repeats: YES];
+  }
 }
 @end
 
@@ -90,6 +113,7 @@ int main (int argc, const char **argv){
   ForceDirectedDelegate *delegate = [ForceDirectedDelegate new];
   [delegate initWithArgc: argc argv: (char**)argv];
   [app setDelegate: delegate];
+  [delegate applyForceDirected: nil];
 
   //run the application
   [app run];
