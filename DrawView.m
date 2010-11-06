@@ -71,11 +71,11 @@
     while (node){
       double x = ND_coord(node).x;
       double y = ND_coord(node).y;
-      NSLog (@"%s %f %f", node->name, x, y);
       NSRect r = NSMakeRect (x, y, 10, 10);
       [[NSColor blueColor] set];
       [NSBezierPath fillRect: r];
-      [[NSString stringWithFormat: @"%s", node->name] drawAtPoint: NSMakePoint(x+10,y+10)
+      [[NSString stringWithFormat: @"%s", node->name]
+               drawAtPoint: NSMakePoint(x+10,y+10)
                     withAttributes: nil];
 
       Agedge_t *edge = agfstedge (graph, node);
@@ -106,7 +106,6 @@
 
 - (void) reset: (id) sender
 {
-  NSLog (@"%s", __FUNCTION__);
   Agnode_t *n1 = agfstnode (graph);
   while (n1){
     ND_coord(n1).x = drand48() * 300;

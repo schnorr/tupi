@@ -56,10 +56,7 @@
   gvc = gvContext();
   gvParseArgs (gvc, argc, (char**)argv);
   graph = gvNextInputGraph(gvc);
-  NSLog (@"layout...");
 //  gvLayout (gvc, graph, "neato");
-
-  NSLog (@"DONE");
   [view setGVC: gvc];
   [view setGraph: graph];
   [view reset: self];
