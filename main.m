@@ -20,7 +20,7 @@
 #include <graphviz/gvc.h>
 #include "DrawView.h"
 
-@interface MyDelegate : NSObject
+@interface ForceDirectedDelegate : NSObject
 {
   id view;
 
@@ -36,14 +36,14 @@
 
   id spring, charge, damping;
 }
-- (void) initWithArgc: (int) c argv: (const char**) v;
+- (void) initWithArgc: (int) c argv: (char**) v;
 - (void) applicationDidFinishLaunching: (NSNotification *)not;
 - (void) updateLabels: (id) sender;
 - (void) applyForceDirected: (id) sender;
 @end
 
-@implementation MyDelegate : NSObject 
-- (void) initWithArgc: (int) c argv: (const char**) v
+@implementation ForceDirectedDelegate : NSObject 
+- (void) initWithArgc: (int) c argv: (char**) v
 {
   argc = c;
   argv = v; 
@@ -82,12 +82,16 @@
 @end
 
 int main (int argc, const char **argv){
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  if (argc == 1){
+    NSLog (@"%s <file.dot>", argv[0]);
+    return 0;
+  }
 
   //appkit init
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   NSApplication *app = [NSApplication sharedApplication];
-  MyDelegate *delegate = [MyDelegate new];
-  [delegate initWithArgc: argc argv: argv];
+  ForceDirectedDelegate *delegate = [ForceDirectedDelegate new];
+  [delegate initWithArgc: argc argv: (char**)argv];
   [app setDelegate: delegate];
 
   //run the application
