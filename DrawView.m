@@ -195,6 +195,18 @@
 //  }while (fabs(total_kinetic_energy.x + total_kinetic_energy.y) > 0.001);// && i < 1000);
 }
 
+- (void) exportPositions
+{
+  Agnode_t *n1;
+  n1 = agfstnode (graph);
+  while (n1){
+    double x = ND_coord(n1).x;
+    double y = ND_coord(n1).y;
+    NSLog (@"%s %f %f", n1->name, x, y);
+    n1 = agnxtnode (graph, n1);
+  }
+}
+
 - (BOOL)acceptsFirstResponder
 {
     return YES;

@@ -45,6 +45,7 @@
 - (void) applicationDidFinishLaunching: (NSNotification *)not;
 - (void) updateLabels: (id) sender;
 - (void) applyForceDirected: (id) sender;
+- (void) exportPositions: (id) sender;
 @end
 
 @implementation ForceDirectedDelegate : NSObject 
@@ -98,6 +99,11 @@
                                   userInfo: nil
                                    repeats: YES];
   }
+}
+
+- (void) exportPositions: (id) sender
+{
+  [view exportPositions];
 }
 @end
 

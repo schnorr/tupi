@@ -49,6 +49,7 @@
 - (double) applyForceDirectedWithSpring: (float) spring
                               andCharge: (float) charge
                              andDamping: (float) damping;
+- (void) exportPositions;
 @end
 
 #endif
