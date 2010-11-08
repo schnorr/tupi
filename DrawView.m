@@ -108,7 +108,7 @@
       NSPoint new = NSAddPoints (current, dif);
       ND_coord(n1).x = new.x;
       ND_coord(n1).y = new.y;
-//      [fixedNodes addObject: name];
+      [fixedNodes addObject: name];
     }
     n1 = agnxtnode (graph, n1);
   }
@@ -207,6 +207,9 @@
     ND_coord(n1).y = drand48() * 300;
     n1 = agnxtnode (graph, n1);
   }
+  [fixedNodes removeAllObjects];
+  [selectedNodes release];
+  selectedNodes = nil;
   [self setNeedsDisplay: YES];
 }
 
@@ -423,6 +426,23 @@
       lastPointForMovingSelectedArea = move;
     }else{
       [self disableSquareSelection];
+
+      //remove nodes from fixedNodes selection    
+      Agnode_t *n1;
+      n1 = agfstnode (graph);
+      NSAffineTransform *t = [self transform];
+      [t invert];
+      NSPoint pt = [t transformPoint: move];
+      while (n1){
+        NSString *name = [NSString stringWithFormat: @"%s", n1->name];
+        double x = ND_coord(n1).x;
+        double y = ND_coord(n1).y;
+        if (NSPointInRect (pt, NSMakeRect (x-5,y-5,10,10))){
+          [fixedNodes removeObject: name];
+        }
+        n1 = agnxtnode (graph, n1);
+      }
+      //end of remove nodes from fixedNodes
     }
   }
 }
