@@ -200,12 +200,35 @@
 
 - (void) exportPositions
 {
+  double minx = FLT_MAX, miny = FLT_MAX;
+  double maxx = -FLT_MAX, maxy = -FLT_MAX;
+
   Agnode_t *n1;
+
+  NSLog (@"These are the coordinates: ");
+
+  //find minx, maxx
+  //find miny, maxy
   n1 = agfstnode (graph);
   while (n1){
     double x = ND_coord(n1).x;
     double y = ND_coord(n1).y;
-    NSLog (@"%s %f %f", n1->name, x, y);
+    if (x < minx) minx = x;
+    if (x > maxx) maxx = x;
+    if (y < miny) miny = y;
+    if (y > maxy) maxy = y;
+    n1 = agnxtnode (graph, n1);
+  }
+
+  fprintf (stderr, "Area = { x = 0; y = 0; width = %f; height = %f; }\n",
+      maxx-minx, maxy-miny);
+
+  //output coordinates
+  n1 = agfstnode (graph);
+  while (n1){
+    double x = ND_coord(n1).x - minx;
+    double y = ND_coord(n1).y - miny;
+    fprintf (stderr, "%s = { x = %f; y = %f; }\n", n1->name, x, y);
     n1 = agnxtnode (graph, n1);
   }
 }
