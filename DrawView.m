@@ -320,7 +320,7 @@
     n1 = agnxtnode (graph, n1);
   }
 
-  fprintf (stderr, "Area = { x = 0; y = 0; width = %f; height = %f; }\n",
+  fprintf (stderr, "area = { x = 0; y = 0; width = %f; height = %f; };\n",
       maxx-minx, maxy-miny);
 
   //output coordinates
@@ -328,7 +328,7 @@
   while (n1){
     double x = ND_coord(n1).x - minx;
     double y = ND_coord(n1).y - miny;
-    fprintf (stderr, "%s = { x = %f; y = %f; }\n", n1->name, x, y);
+    fprintf (stderr, "%s = { x = %f; y = %f; };\n", n1->name, x, y);
     n1 = agnxtnode (graph, n1);
   }
 }
