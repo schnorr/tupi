@@ -102,6 +102,9 @@
 
   [transform invert];
   [transform concat];
+
+  [NSStringFromPoint(lastMousePosition) drawAtPoint: NSMakePoint (tela.size.width/2, tela.size.height-20)
+                                  withAttributes: nil];
 }
 
 - (void) reset: (id) sender
@@ -251,15 +254,18 @@
   movingSingleNode = NO;
 }
 
+*/
 - (void) mouseMoved:(NSEvent *)event
 {
-  NSPoint p, p2;
+  NSPoint p;
   p = [self convertPoint:[event locationInWindow] fromView:nil];
 
   NSAffineTransform *t = [self transform];
   [t invert];
-  p2 = [t transformPoint: p];
+  lastMousePosition = [t transformPoint: p];
 
+  [self setNeedsDisplay: YES];
+/*
   //search for selected areas
   if (NSPointInRect (p2, selectedArea)){
     highlightSelectedArea = YES;
@@ -318,8 +324,8 @@
       [self setNeedsDisplay: YES];
     }
   }
-}
 */
+}
 
 - (void)scrollWheel:(NSEvent *)event
 {

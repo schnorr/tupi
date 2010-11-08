@@ -29,6 +29,7 @@
 @interface DrawView : NSView
 {
   NSPoint move; //for use in mouse(down|dragged)
+  NSPoint lastMousePosition;
 
   id springSlider;
   id chargeSlider;
