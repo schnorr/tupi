@@ -42,6 +42,23 @@
   //to keep graph info
   GVC_t *gvc;
   graph_t *graph;
+
+  //interaction states
+  BOOL selectingArea;
+  BOOL movingSelectedArea;
+  
+  //for moving selected area
+  NSPoint lastPointForMovingSelectedArea;
+
+  //set of selected nodes
+  NSMutableSet *selectedNodes;
+  
+  //set of fixed nodes that are not affected by the force-directed algorithms
+  NSMutableSet *fixedNodes;
+
+  //drawing selectedArea
+  NSRect selectedArea;
+  BOOL highlightSelectedArea;
 }
 - (NSAffineTransform*) transform;
 - (void) setGVC: (GVC_t *) g;

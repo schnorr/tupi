@@ -26,6 +26,7 @@
   gvc = NULL;
   graph = NULL;
   ratio = 1;
+  fixedNodes = [[NSMutableSet alloc] init];
   return self;
 }
 
@@ -45,6 +46,72 @@
   [transform translateXBy: translate.x yBy: translate.y];
   [transform scaleXBy: ratio yBy: ratio];
   return transform;
+}
+
+- (void) disableSquareSelection
+{
+  [selectedNodes release];
+  selectedNodes = nil;
+
+  selectingArea = NO;
+  selectedArea = NSZeroRect;
+  highlightSelectedArea = NO;
+  lastPointForMovingSelectedArea = NSZeroPoint;
+}
+
+- (void) highlightSquareSelectionWith: (NSPoint) point
+{
+  //search for selected areas
+  if (NSPointInRect (lastMousePosition, selectedArea)){
+    highlightSelectedArea = YES;
+  }else{
+    highlightSelectedArea = NO;
+  }
+}
+
+- (void) enableSquareSelectionWith: (NSRect) square
+{
+  selectingArea = YES;
+  selectedArea = square;
+
+  //do multiple node selection
+  [selectedNodes release];
+  selectedNodes = [[NSMutableSet alloc] init];
+
+  Agnode_t *n1;
+  n1 = agfstnode (graph);
+  while (n1){
+    NSPoint current = NSMakePoint (ND_coord(n1).x, ND_coord(n1).y);
+    if (NSPointInRect (current, selectedArea)){
+      [selectedNodes addObject: [NSString stringWithFormat: @"%s", n1->name]];
+    }
+    n1 = agnxtnode (graph, n1);
+  }
+}
+
+- (void) moveSquareSelectionBy: (NSPoint) dif
+{
+  //updating selected area
+  selectedArea.origin = NSAddPoints (selectedArea.origin, dif);
+
+  [selectedNodes release];
+  selectedNodes = [[NSMutableSet alloc] init];
+
+  Agnode_t *n1;
+  n1 = agfstnode (graph);
+  while (n1){
+    NSString *name = [NSString stringWithFormat: @"%s", n1->name];
+    NSPoint current = NSMakePoint (ND_coord(n1).x, ND_coord(n1).y);
+
+    if (NSPointInRect (current, selectedArea)){
+      [selectedNodes addObject: name];
+      NSPoint new = NSAddPoints (current, dif);
+      ND_coord(n1).x = new.x;
+      ND_coord(n1).y = new.y;
+//      [fixedNodes addObject: name];
+    }
+    n1 = agnxtnode (graph, n1);
+  }
 }
 
 - (BOOL) isFlipped
@@ -69,14 +136,26 @@
   if (gvc && graph){
     Agnode_t *node = agfstnode (graph);
     while (node){
+      NSString *name = [NSString stringWithFormat: @"%s", node->name];
+
       double x = ND_coord(node).x;
       double y = ND_coord(node).y;
-      NSRect r = NSMakeRect (x, y, 10, 10);
-      [[NSColor blueColor] set];
+      NSRect r = NSMakeRect (x-5, y-5, 10, 10);
+      if ([selectedNodes containsObject: name]){
+        [[NSColor redColor] set];
+      }else{
+        [[NSColor blueColor] set];
+      }
       [NSBezierPath fillRect: r];
-      [[NSString stringWithFormat: @"%s", node->name]
-               drawAtPoint: NSMakePoint(x+10,y+10)
-                    withAttributes: nil];
+      
+      if ([fixedNodes containsObject: name]){
+        NSRect fix = NSMakeRect (x-2, y-2, 4, 4);
+        [[NSColor yellowColor] set];
+        [NSBezierPath fillRect: fix];
+      }
+
+      [name drawAtPoint: NSMakePoint(x+10,y+10)
+         withAttributes: nil];
 
       Agedge_t *edge = agfstedge (graph, node);
       while (edge){
@@ -99,6 +178,19 @@
       node = agnxtnode (graph, node);
     }
   }
+
+  //selected area
+  if (!NSEqualRects(selectedArea, NSZeroRect)) {
+    NSBezierPath *path = [NSBezierPath bezierPathWithRect: selectedArea];
+    if (highlightSelectedArea){
+      [path setLineWidth: 2/ratio];
+    }else{
+      [path setLineWidth: 1/ratio];
+    }
+    [[NSColor blueColor] set];
+    [path stroke];
+  }
+
 
   [transform invert];
   [transform concat];
@@ -140,6 +232,7 @@
     total_kinetic_energy = NSMakePoint(0,0);
     n1 = agfstnode (graph);
     while (n1){
+      NSString *name = [NSString stringWithFormat: @"%s", n1->name];
       // running sum of total force on this particular node
       NSPoint force = NSMakePoint (0, 0);
 
@@ -172,16 +265,20 @@
         }
         n2 = agnxtnode (graph, n2);
       }
-      NSPoint velocity = NSMakePoint (atof(agget (n1, "dx")), atof(agget (n1, "dy")));
-      velocity = NSAddPoints (velocity, force);
-      velocity = LMSMultiplyPoint (velocity, damping);
 
-      ND_coord(n1).x = ND_coord(n1).x + velocity.x;
-      ND_coord(n1).y = ND_coord(n1).y + velocity.y;
+      if (![fixedNodes containsObject: name]){
 
-      //save velocity?
-
-      total_kinetic_energy = NSAddPoints (total_kinetic_energy, velocity); 
+        NSPoint velocity = NSMakePoint (atof(agget (n1, "dx")), atof(agget (n1, "dy")));
+        velocity = NSAddPoints (velocity, force);
+        velocity = LMSMultiplyPoint (velocity, damping);
+ 
+        ND_coord(n1).x = ND_coord(n1).x + velocity.x;
+        ND_coord(n1).y = ND_coord(n1).y + velocity.y;
+ 
+        //save velocity?
+ 
+        total_kinetic_energy = NSAddPoints (total_kinetic_energy, velocity); 
+      }
 
       n1 = agnxtnode (graph, n1);
     }
@@ -249,14 +346,57 @@
   NSPoint p;
   p = [self convertPoint:[event locationInWindow] fromView:nil];
 
-  NSPoint dif;
-  dif = NSSubtractPoints (p, move);
-  if (NSEqualPoints (translate, NSZeroPoint)){
-    translate = dif;
+  if (selectingArea){
+    NSAffineTransform *t = [self transform];
+    [t invert];
+    NSPoint b = [t transformPoint: p];
+    NSPoint a = selectedArea.origin;
+
+    NSPoint origin, diagonal;
+    NSSize size;
+
+    if (b.x == a.x || b.y == a.y) return;
+
+    if (b.x > a.x && b.y > a.y) {
+      //top right
+      origin = a;
+      diagonal = b;
+    } else if (b.x < a.x && b.y < a.y) {
+      //bottom left
+      origin = b;
+      diagonal = NSMakePoint(a.x+selectedArea.size.width, a.y+selectedArea.size.height);
+    } else if (b.x > a.x && b.y < a.y){
+      //bottom right
+      origin = NSMakePoint (a.x, b.y);
+      diagonal = NSMakePoint (b.x, a.y + selectedArea.size.height);
+    } else if (b.x < a.x && b.y > a.y) {
+      //top left
+      origin = NSMakePoint (b.x, a.y);
+      diagonal = NSMakePoint (a.x + selectedArea.size.width, b.y);
+    }
+
+    size.width = diagonal.x - origin.x;
+    size.height = diagonal.y - origin.y;
+
+    NSRect area;
+    area.origin = origin;
+    area.size = size;
+    [self enableSquareSelectionWith: area];
+  }else if(movingSelectedArea){
+    NSPoint dif;
+    dif = NSSubtractPoints (p, lastPointForMovingSelectedArea);
+    [self moveSquareSelectionBy: dif];
+    lastPointForMovingSelectedArea = p; 
   }else{
-    translate = NSAddPoints (translate, dif);
+    NSPoint dif;
+    dif = NSSubtractPoints (p, move);
+    if (NSEqualPoints (translate, NSZeroPoint)){
+      translate = dif;
+    }else{
+      translate = NSAddPoints (translate, dif);
+    }
+    move = p;
   }
-  move = p;
   
   [self setNeedsDisplay: YES];
 }
@@ -264,20 +404,51 @@
 - (void) mouseDown: (NSEvent *) event
 {
   move = [self convertPoint:[event locationInWindow] fromView:nil];
+
+  if ([event modifierFlags] & NSControlKeyMask){
+    if (selectingArea){
+      [self disableSquareSelection];
+    }else{
+      NSAffineTransform *t = [self transform];
+      [t invert];
+      NSPoint pt = [t transformPoint: move];
+      NSRect area;
+      area.origin = pt;
+      area.size = NSZeroSize;
+      [self enableSquareSelectionWith: area];
+    }
+  }else{
+    if (highlightSelectedArea){
+      movingSelectedArea = YES;
+      lastPointForMovingSelectedArea = move;
+    }else{
+      [self disableSquareSelection];
+    }
+  }
 }
 
-/*
 - (void) mouseUp: (NSEvent *) event
 {
   if (selectingArea){
-    //do multiple node selection
-  }
 
-  selectingArea = NO;
-  movingSingleNode = NO;
-}
+/*
+    NSAffineTransform* t = [self transform];
+    [t concat];
+    NSRect transformedSelArea;
+    transformedSelArea.origin = [t transformPoint: selectedArea.origin];
+    transformedSelArea.size = [t transformSize: selectedArea.size];
+    [t invert];
+    [t concat];
 
 */
+    selectingArea = NO;
+  }
+
+  if (movingSelectedArea){
+    movingSelectedArea = NO;
+  }
+}
+
 - (void) mouseMoved:(NSEvent *)event
 {
   NSPoint p;
@@ -286,68 +457,8 @@
   NSAffineTransform *t = [self transform];
   [t invert];
   lastMousePosition = [t transformPoint: p];
-
+  [self highlightSquareSelectionWith: lastMousePosition];
   [self setNeedsDisplay: YES];
-/*
-  //search for selected areas
-  if (NSPointInRect (p2, selectedArea)){
-    highlightSelectedArea = YES;
-  }else{
-    highlightSelectedArea = NO;
-  }
-  [self setNeedsDisplay: YES];
-
-  //search for nodes
-  ForceDirectedGraphNode *node;
-  NSEnumerator *en = [filter enumeratorOfNodes];
-  BOOL found = NO;
-  while ((node = [en nextObject])){
-    if([node mouseInside: p2]){
-      if (selectedNode){
-        [selectedNode setHighlight: NO];
-      }
-      selectedNode = node;
-      [selectedNode setHighlight: YES];
-      [self setNeedsDisplay: YES];
-      found = YES;
-      break;
-    }
-  }
-  if (!found){
-    if (selectedNode){
-      [selectedNode setHighlight: NO];
-      selectedNode = nil;
-      [self setNeedsDisplay: YES];
-    }
-  }else{
-    return;
-  }
-
-  //search for edges
-  ForceDirectedGraphEdge *edge = nil;
-  en = [filter enumeratorOfEdges];
-  found = NO;
-  while ((edge = [en nextObject])){
-    if ([edge mouseInside: p2]){
-      if (selectedEdge){
-        [selectedEdge setHighlight: NO];
-        selectedEdge = nil;
-      }
-      selectedEdge = edge;
-      [selectedEdge setHighlight: YES];
-      [self setNeedsDisplay: YES];
-      found = YES;
-      break;
-    }
-  }
-  if (!found){
-    if (selectedEdge){
-      [selectedEdge setHighlight: NO];
-      selectedEdge = nil;
-      [self setNeedsDisplay: YES];
-    }
-  }
-*/
 }
 
 - (void)scrollWheel:(NSEvent *)event
