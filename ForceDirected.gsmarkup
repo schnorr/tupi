@@ -5,13 +5,13 @@
 
   <objects>
 
-    <window autosaveName="ForceDirectedWindow"
+    <window id="window" autosaveName="ForceDirectedWindow"
             width="500" height="300"
             title="Force Directed" 
             resizable="yes">
       <vbox halign="expand">    
         <view id="view"
-              instanceOf="DrawView"
+              instanceOf="ForceDirectedView"
               halign="expand" valign="expand" />
         <hbox>
           <label>Spring</label>
@@ -44,6 +44,7 @@
 
   <connectors>
     <outlet source="#NSOwner" target="#view" key="view" />
+    <outlet source="#NSOwner" target="#window" key="window" />
     <outlet source="#NSOwner" target="#springSlider" key="springSlider" />
     <outlet source="#NSOwner" target="#chargeSlider" key="chargeSlider" />
     <outlet source="#NSOwner" target="#dampingSlider" key="dampingSlider" />

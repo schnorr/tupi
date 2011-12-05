@@ -24,19 +24,44 @@
   return self;
 }
 
+- (void) setGraph: (Agraph_t *)g
+{
+  graph = g;
+}
+
 - (void) drawRect: (NSRect)frame
 {
   NSAffineTransform* transform = [self transform];
   [transform concat]; 
 
-  NSRect r = NSMakeRect (0,0,10,10);
-  [[NSColor redColor] set];
-  NSRectFill(r);
+  if (graph){
+    [[NSColor redColor] set];
+    Agnode_t *node = agfstnode(graph);
+    while (node){
+      NSRect r = NSMakeRect (ND_coord(node).x,ND_coord(node).y,10,10);
+      NSRectFill(r);
+
+      Agedge_t *edge = agfstedge (graph, node);
+      while (edge){
+        NSPoint src, dst;
+        src.x = ND_coord(edge->head).x+10/2;
+        src.y = ND_coord(edge->head).y+10/2;
+        dst.x = ND_coord(edge->tail).x+10/2;
+        dst.y = ND_coord(edge->tail).y+10/2;
+        NSBezierPath *path = [NSBezierPath bezierPath];
+        [path moveToPoint: src];
+        [path lineToPoint: dst];
+        [path stroke];
+
+        edge = agnxtedge (graph, edge, node);
+      }
+      node = agnxtnode(graph, node);
+    }
+  }
 
   [transform invert];
   [transform concat];
 }
-
 
 - (BOOL)acceptsFirstResponder
 {

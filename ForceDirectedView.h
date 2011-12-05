@@ -18,8 +18,14 @@
 #define __FORCE_DIRECTED_VIEW__H__
 #include <AppKit/AppKit.h>
 #include "BasicView.h"
+#include <graphviz/types.h>
+#include <graphviz/graph.h>
 
 @interface ForceDirectedView : BasicView
+{
+  Agraph_t *graph;
+}
+- (void) setGraph: (Agraph_t *)g;
 @end
 
 #endif
