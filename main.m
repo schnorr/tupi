@@ -17,18 +17,17 @@
 #include <Foundation/Foundation.h>
 #include <AppKit/AppKit.h>
 #include <Renaissance/Renaissance.h>
-#include <graphviz/gvc.h>
+#include <graphviz/types.h>
+#include <graphviz/graph.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "DrawView.h"
+#include "BasicView.h"
 
 @interface ForceDirectedDelegate : NSObject
 {
-  id view;
-
-  int argc;
-  char **argv;
-
-  GVC_t *gvc;
-  graph_t *graph;
+  BasicView *view;
+  NSWindow *window;
 
   NSSlider *springSlider;
   NSSlider *chargeSlider;
@@ -40,34 +39,55 @@
   
   //for animation
   NSTimer *timer;
+
+  //graph
+  Agraph_t *graph;
 }
-- (void) initWithArgc: (int) c argv: (char**) v;
-- (void) applicationDidFinishLaunching: (NSNotification *)not;
 - (void) updateLabels: (id) sender;
 - (void) applyForceDirected: (id) sender;
 - (void) exportPositions: (id) sender;
 @end
 
 @implementation ForceDirectedDelegate : NSObject 
-- (void) initWithArgc: (int) c argv: (char**) v
-{
-  argc = c;
-  argv = v; 
-  timer = nil;
-}
-
 - (void) applicationDidFinishLaunching: (NSNotification *)not;
 {
   [NSBundle loadGSMarkupNamed: @"ForceDirected"  owner: self];
-
-  gvc = gvContext();
-  gvParseArgs (gvc, argc, (char**)argv);
-  graph = gvNextInputGraph(gvc);
-//  gvLayout (gvc, graph, "neato");
-  [view setGVC: gvc];
-  [view setGraph: graph];
-  [view reset: self];
+  [window makeKeyAndOrderFront: self];
+  [window setDelegate: self];
   [self updateLabels: self];
+
+  //get the dot file as argument
+  NSArray *args = [[NSProcessInfo processInfo] arguments];
+  if ([args count] < 2){
+    NSLog (@"Usage: %@ <graphviz_dot_file>", [args objectAtIndex: 0]);
+    [[NSApplication sharedApplication] terminate:self];
+  }
+  NSString *dot = [args objectAtIndex: 1];
+  FILE *file = fopen ([dot cString], "r");
+  if (!file){
+    NSLog (@"Could not open file %@", dot);
+    [[NSApplication sharedApplication] terminate:self];
+  }
+  graph = agread (file);
+  if (!graph){
+    NSLog (@"Could not read a graph from file %@ (agread)", dot);
+    [[NSApplication sharedApplication] terminate:self];
+  }
+
+  //set random positions of all nodes based on view bounds
+  NSRect bounds = [view bounds];
+  Agnode_t *node = agfstnode (graph);
+  while (node){
+    ND_coord(node).x = bounds.size.width * drand48();
+    ND_coord(node).y = bounds.size.height * drand48();
+    node = agnxtnode (graph, node);
+  }
+  [view setGraph: graph];
+}
+
+- (void)applicationWillTerminate:(NSNotification *)aNotification
+{
+  agclose(graph);
 }
 
 - (void) updateLabels: (id) sender
@@ -105,26 +125,22 @@
 {
   [view exportPositions];
 }
+
+- (BOOL) windowShouldClose: (id) sender
+{
+  [[NSApplication sharedApplication] terminate:self];
+  return YES;
+}
 @end
 
-int main (int argc, const char **argv){
-  if (argc == 1){
-    NSLog (@"%s <file.dot>", argv[0]);
-    return 0;
-  }
-
-  //appkit init
+int main (int argc, const char **argv)
+{
+  aginit();
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   NSApplication *app = [NSApplication sharedApplication];
   ForceDirectedDelegate *delegate = [ForceDirectedDelegate new];
-  [delegate initWithArgc: argc argv: (char**)argv];
   [app setDelegate: delegate];
-  [delegate applyForceDirected: nil];
 
-  //run the application
-  [app run];
-
-  //that's it
-  [pool release];
-  return 0;
+  RELEASE(pool);
+  return NSApplicationMain (argc, argv);
 }
