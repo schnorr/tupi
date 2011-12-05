@@ -1,7 +1,7 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
 APP_NAME = ForceDirected
-ForceDirected_OBJC_FILES = main.m DrawView.m
+ForceDirected_OBJC_FILES = main.m DrawView.m BasicView.m ForceDirectedView.m
 ForceDirected_RESOURCE_FILES = ForceDirected.gsmarkup
 
 ifeq ($(FOUNDATION_LIB), apple)
