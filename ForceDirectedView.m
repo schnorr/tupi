@@ -32,16 +32,23 @@
 
 - (void) drawRect: (NSRect)frame
 {
+  [[NSColor whiteColor] set];
+  NSRectFill([self bounds]);
+
   NSAffineTransform* transform = [self transform];
   [transform concat]; 
 
+  NSLog (@"%s waiting for lock", __FUNCTION__);
   [lock lock];
+  NSLog (@"%s locked", __FUNCTION__);
   if (graph){
     [[NSColor redColor] set];
     Agnode_t *node = agfstnode(graph);
     while (node){
       NSRect r = NSMakeRect (ND_coord(node).x,ND_coord(node).y,10,10);
       NSRectFill(r);
+      // NSLog (@"drawing %s", node->name);
+
 
       Agedge_t *edge = agfstedge (graph, node);
       while (edge){
@@ -57,9 +64,11 @@
 
         edge = agnxtedge (graph, edge, node);
       }
+
       node = agnxtnode(graph, node);
     }
   }
+  NSLog (@"%s unlock", __FUNCTION__);
   [lock unlock];
 
   [transform invert];

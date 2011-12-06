@@ -31,6 +31,7 @@
   NSMutableArray *children; //of FDTree objects
   NSPoint particle;
   NSPoint pseudoParticle;
+  double pseudoParticleCharge;
 }
 - (id) initWithCell: (NSRect)c
              parent: (FDTree*)p;
@@ -39,6 +40,9 @@
 - (void) printWithDepth: (int)level;
 - (BOOL) isEmpty;
 - (void) clean;
+- (NSPoint) coulombRepulsionOfParticle:(NSPoint)p
+                                charge:(double)charge
+                              accuracy:(double)accuracy;
 @end
 
 @implementation FDTree
@@ -51,6 +55,7 @@
   children = nil;
   particle = NSZeroPoint;
   pseudoParticle = NSZeroPoint;
+  pseudoParticleCharge = 0;
   return self;
 }
 
@@ -90,11 +95,15 @@
   FDTree *c4 = [[FDTree alloc] initWithCell: topRight
                                      parent: self];
   children = [[NSMutableArray alloc] initWithObjects: c1, c2, c3, c4, nil];
+  [c1 release];
+  [c2 release];
+  [c3 release];
+  [c4 release];
 }
 
 - (void) addParticle: (NSPoint)p
 {
-  NSLog (@"%@ add %@", self, NSStringFromPoint(p));
+  // NSLog (@"%@ add %@", self, NSStringFromPoint(p));
   //three situations
   //0 - zero particle, zero children
   //1 - one particle, zero children
@@ -102,14 +111,14 @@
 
   if (NSEqualPoints(particle, NSZeroPoint) && children == nil){
 
-    NSLog (@"Case #0");
+    // NSLog (@"Case #0");
     particle = p;
 
 
   }else if(!NSEqualPoints(particle, NSZeroPoint) && children == nil){
 
 
-    NSLog (@"Case #1.1");
+    // NSLog (@"Case #1.1");
     [self splitCell];
     //add current particle to children
     NSEnumerator *e = [children objectEnumerator];
@@ -122,7 +131,7 @@
       }
     }
 
-    NSLog (@"Case #1.2");
+    // NSLog (@"Case #1.2");
     //add new particle to children
     e = [children objectEnumerator];
     while ((child = [e nextObject])){
@@ -136,7 +145,7 @@
   }else if(NSEqualPoints(particle, NSZeroPoint) && children != nil){
 
 
-    NSLog (@"Case #2");
+    // NSLog (@"Case #2");
     //add new particle
     NSEnumerator *e = [children objectEnumerator];
     FDTree *child;
@@ -152,6 +161,18 @@
     NSLog (@"unknow state");
     exit(1);
   }
+  pseudoParticleCharge += 10;
+  //calculate "center of charge" based on gravity
+  if (NSEqualPoints(pseudoParticle, NSZeroPoint)){
+    pseudoParticle = p;
+  }else{
+    NSRect r1 = NSMakeRect(pseudoParticle.x,
+                           pseudoParticle.y,
+                           1, 1);
+    NSRect r2 = NSMakeRect(p.x, p.y, 1, 1);
+    NSRect r = NSUnionRect(r1,r2);
+    pseudoParticle = NSMakePoint(NSMidX(r), NSMidY(r));
+  }
   return;
 }
 
@@ -163,7 +184,7 @@
 - (void) printWithDepth: (int)level
 {
   if (NSEqualPoints(particle, NSZeroPoint)){
-    NSLog(@"|%*.*s<%p> c=%lu", level, level, "", self, [children count]);
+    NSLog(@"|#%*.*s<%p> c=%lu c=%.0f P=%@", level, level, "", self, [children count], pseudoParticleCharge, NSStringFromPoint(pseudoParticle));
   }else{
     NSLog(@"|%*.*s<%p> c=%lu p=%@", level, level, "", self, [children count], NSStringFromPoint(particle));
   }
@@ -203,6 +224,47 @@
     [child clean];
   }
 }
+
+- (NSPoint) coulombRepulsionOfParticle:(NSPoint)p
+                               charge:(double)charge
+                             accuracy:(double)accuracy
+{
+  NSPoint force = NSMakePoint (0, 0);
+
+  double length = mycell.size.height;
+  double distance = LMSDistanceBetweenPoints (p, pseudoParticle);
+  NSPoint dif = NSSubtractPoints (p, pseudoParticle);
+
+  if (distance == 0){
+    return force;
+  }
+
+  //coulomb_repulsion (k_e * (q1 * q2 / r*r))
+  double coulomb_repulsion = 0;
+  double coulomb_constant = 1;
+  double r = distance;
+  double q1 = charge;
+  double q2 = pseudoParticleCharge;
+  coulomb_repulsion = coulomb_constant * (q1*q2)/(r*r);
+ 
+  force = NSAddPoints (force,
+                       LMSMultiplyPoint (LMSNormalizePoint(dif),
+                                         coulomb_repulsion));
+  // NSLog (@"<%p> %@", self, NSStringFromPoint(force));
+  NSEnumerator *e = [children objectEnumerator];
+  FDTree *child;
+  while ((child = [e nextObject])){
+    if (NSPointInRect(p, [child cell])){
+      NSPoint f = [child coulombRepulsionOfParticle:p
+                                             charge:charge
+                                           accuracy:accuracy];
+      force = NSAddPoints(force, f);
+      break;
+    }
+  }
+  return force;
+}
+
 @end
 
 @interface ForceDirectedDelegate : NSObject
@@ -273,7 +335,11 @@
   //                                              object: nil];
   //[thread start];
 
-  [self forceDirectedAlgorithmV2: self];
+  NSThread *thread = [[NSThread alloc] initWithTarget: self
+                                             selector:
+                                         @selector(forceDirectedAlgorithmV2:)
+                                               object: nil];
+  [thread start];
 
   [view setGraph: graph withConditionLock: lock];
 }
@@ -321,7 +387,7 @@
 
 - (void) resetPositions: (id) sender
 {
-  srand48(time(NULL));
+  //srand48(time(NULL));
   NSRect bounds = [view bounds];
   Agnode_t *node = agfstnode (graph);
   while (node){
@@ -329,37 +395,149 @@
     ND_coord(node).y = bounds.size.height * drand48();
     node = agnxtnode (graph, node);
   }
-  [self forceDirectedAlgorithmV2: sender];
-  [view setNeedsDisplay: YES];
 }
 
 - (void) forceDirectedAlgorithmV2: (id) sender
 {
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  if (!graph) return;
 
-  Agnode_t *node = agfstnode(graph);
-  NSRect bounds = NSZeroRect;
-  while(node){
-    NSRect np = NSMakeRect (ND_coord(node).x, ND_coord(node).y, 1, 1);
-    bounds = NSUnionRect(bounds, np);
-    node = agnxtnode(graph, node);
+  NSDate *lastViewUpdate = [NSDate distantPast];
+
+  // set up initial node velocities to (0,0)
+  Agnode_t *node = agfstnode (graph);
+  while (node){
+    agsafeset (node, "dx", "0", "0");
+    agsafeset (node, "dy", "0", "0");
+    node = agnxtnode (graph, node);
   }
 
-  FDTree *t = [[FDTree alloc] initWithCell: bounds parent: nil];
-  node = agfstnode(graph);
-  while(node){
-    NSPoint np = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
-    NSLog (@"adding particle %@", NSStringFromPoint(np));
-    [t addParticle: np];
-    node = agnxtnode(graph,node);
+  int i;
+  while (![[NSThread currentThread] isCancelled]){
+//    [NSThread sleepForTimeInterval: .1];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+
+    NSLog (@"%s waiting for lock", __FUNCTION__);
+    [lock lock];
+    NSLog (@"%s locked", __FUNCTION__);
+
+    Agnode_t *node = agfstnode(graph);
+    NSRect bounds = NSZeroRect;
+    while(node){
+      NSRect np = NSMakeRect (ND_coord(node).x, ND_coord(node).y, 1, 1);
+      bounds = NSUnionRect(bounds, np);
+      node = agnxtnode(graph, node);
+    }
+
+    FDTree *t = [[FDTree alloc] initWithCell: bounds parent: nil];
+    node = agfstnode(graph);
+    while(node){
+      NSPoint np = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
+      // NSLog (@"adding particle %@", NSStringFromPoint(np));
+      [t addParticle: np];
+      node = agnxtnode(graph,node);
+    }
+    [t clean];
+
+    // [t printWithDepth: 0];
+
+    // calculate forces
+    float spring = [springSlider floatValue];
+    float charge = [chargeSlider floatValue];
+    float damping = [dampingSlider floatValue];
+
+    node = agfstnode(graph);
+    while(node){
+      NSPoint np = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
+      // NSLog (@"calculating for node %s (%@)", node->name, NSStringFromPoint(np));
+      NSPoint force = [t coulombRepulsionOfParticle:np
+                                             charge:charge
+                                           accuracy:1];
+      NSLog (@"p=%s force=%@", node->name, // NSStringFromPoint(np),
+             NSStringFromPoint(force));
+      if(0){
+      Agedge_t *edge = agfstin(graph,node);
+      while (edge){
+        Agnode_t *n2 = node == edge->head ? edge->tail : edge->head;
+          NSPoint n1p = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
+          NSPoint n2p = NSMakePoint (ND_coord(n2).x, ND_coord(n2).y);
+          NSPoint dif = NSSubtractPoints (n1p, n2p);
+          double distance = LMSDistanceBetweenPoints (n1p, n2p);
+
+          //hooke_attraction (-k * x)
+          double hooke_attraction = 1 - (fabs (distance - spring) / spring);
+          force = NSAddPoints (force,
+                               LMSMultiplyPoint (LMSNormalizePoint(dif),
+                                                 hooke_attraction));
+
+        // NSLog (@"IN node=%p(%s), edge=%p (%s)\n", node, node->name, edge, n2->name);
+        edge = agnxtin(graph,edge);
+      }
+      edge = agfstout(graph,node);
+      while (edge){
+        Agnode_t *n2 = node == edge->head ? edge->tail : edge->head;
+          NSPoint n1p = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
+          NSPoint n2p = NSMakePoint (ND_coord(n2).x, ND_coord(n2).y);
+          NSPoint dif = NSSubtractPoints (n1p, n2p);
+          double distance = LMSDistanceBetweenPoints (n1p, n2p);
+
+          //hooke_attraction (-k * x)
+          double hooke_attraction = 1 - (fabs (distance - spring) / spring);
+          force = NSAddPoints (force,
+                               LMSMultiplyPoint (LMSNormalizePoint(dif),
+                                                 hooke_attraction));
+
+
+        // NSLog (@"OUT node=%p(%s), edge=%p (%s)\n", node, node->name, edge, n2->name);
+        edge = agnxtout(graph,edge);
+      }
+    }
+
+
+      //hack for attraction
+      Agnode_t *n2 = agfstnode(graph);
+      while (n2){
+        if (agfindedge(graph,node,n2) || agfindedge(graph,n2,node)){
+
+          NSPoint n1p = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
+          NSPoint n2p = NSMakePoint (ND_coord(n2).x, ND_coord(n2).y);
+          NSPoint dif = NSSubtractPoints (n1p, n2p);
+          double distance = LMSDistanceBetweenPoints (n1p, n2p);
+
+          //hooke_attraction (-k * x)
+          double hooke_attraction = 1 - (fabs (distance - spring) / spring);
+          force = NSAddPoints (force,
+                               LMSMultiplyPoint (LMSNormalizePoint(dif),
+                                                 hooke_attraction));
+        }
+        n2 = agnxtnode(graph,n2);
+      }
+
+      NSPoint velocity = NSMakePoint (atof(agget (node, "dx")),
+                                      atof(agget (node, "dy")));
+      velocity = NSAddPoints (velocity, force);
+      velocity = LMSMultiplyPoint (velocity, damping);
+ 
+      ND_coord(node).x = ND_coord(node).x + velocity.x;
+      ND_coord(node).y = ND_coord(node).y + velocity.y;
+
+      node = agnxtnode(graph,node);
+    }
+    NSLog (@"%s unlock", __FUNCTION__);
+    [lock unlock];
+    [t release];
+
+    //update view?
+    NSDate *now = [NSDate dateWithTimeIntervalSinceNow: 0];
+    double difTime = [now timeIntervalSinceDate: lastViewUpdate];
+    if (difTime > 0.01){
+      [lastViewUpdate release];
+      lastViewUpdate = now;
+      [view setNeedsDisplay: YES];
+    }
+    [lastViewUpdate retain];
+
+    [pool release];
   }
-
-  //print tree
-  NSLog (@"print the tree");
-  [t clean];
-  [t printWithDepth: 0];
-
-  [pool release];
 }
 
 - (void) forceDirectedAlgorithmV1: (id) sender
@@ -431,8 +609,8 @@
         n2 = agnxtnode (graph, n2);
       }
 
-      NSPoint velocity = NSMakePoint (atof(agget (n1, "dx")),
-                                      atof(agget (n1, "dy")));
+      NSPoint velocity = NSMakePoint (0,0);// atof(agget (n1, "dx")),
+                                      // atof(agget (n1, "dy")));
       velocity = NSAddPoints (velocity, force);
       velocity = LMSMultiplyPoint (velocity, damping);
  
