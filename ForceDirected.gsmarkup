@@ -36,7 +36,9 @@
                                           max="1"/>
                                   <label id="dampingLabel"/>
           <button target="#NSOwner" action="exportPositions:" title="Export"/>
-          <button target="#view" action="reset:" title="Reset Position"/>
+          <button target="#NSOwner"
+                  action="resetPositions:"
+                  title="Reset Position"/>
         </hbox>
       </vbox>
     </window>
