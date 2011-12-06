@@ -24,9 +24,10 @@
   return self;
 }
 
-- (void) setGraph: (Agraph_t *)g
+- (void) setGraph: (Agraph_t *)g withConditionLock: (NSConditionLock*)l
 {
   graph = g;
+  lock = l;
 }
 
 - (void) drawRect: (NSRect)frame
@@ -34,6 +35,7 @@
   NSAffineTransform* transform = [self transform];
   [transform concat]; 
 
+  [lock lock];
   if (graph){
     [[NSColor redColor] set];
     Agnode_t *node = agfstnode(graph);
@@ -58,6 +60,7 @@
       node = agnxtnode(graph, node);
     }
   }
+  [lock unlock];
 
   [transform invert];
   [transform concat];

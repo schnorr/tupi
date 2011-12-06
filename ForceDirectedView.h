@@ -24,8 +24,9 @@
 @interface ForceDirectedView : BasicView
 {
   Agraph_t *graph;
+  NSConditionLock *lock;
 }
-- (void) setGraph: (Agraph_t *)g;
+- (void) setGraph: (Agraph_t *)g withConditionLock: (NSConditionLock *)l;
 @end
 
 #endif
