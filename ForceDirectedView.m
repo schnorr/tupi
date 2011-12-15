@@ -38,6 +38,7 @@
   NSAffineTransform* transform = [self transform];
   [transform concat]; 
 
+  [tree drawCellsWithLevel:0];
   NSLog (@"%s waiting for lock", __FUNCTION__);
   [lock lock];
   NSLog (@"%s locked", __FUNCTION__);
@@ -84,5 +85,10 @@
 {
     [[self window] setAcceptsMouseMovedEvents: YES];
     return YES;
+}
+
+- (void) setTree: (FDTree*) t
+{
+  tree = t;
 }
 @end

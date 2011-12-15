@@ -18,6 +18,7 @@
 #define __FORCE_DIRECTED_VIEW__H__
 #include <AppKit/AppKit.h>
 #include "BasicView.h"
+#include "FDTree.h"
 #include <graphviz/types.h>
 #include <graphviz/graph.h>
 
@@ -25,8 +26,10 @@
 {
   Agraph_t *graph;
   NSConditionLock *lock;
+  FDTree *tree;
 }
 - (void) setGraph: (Agraph_t *)g withConditionLock: (NSConditionLock *)l;
+- (void) setTree: (FDTree*) t;
 @end
 
 #endif
