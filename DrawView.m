@@ -286,7 +286,6 @@
       n1 = agnxtnode (graph, n1);
     }
 
-//    NSLog (@"total_kinetic_energy = %@, old = %@",  NSStringFromPoint(total_kinetic_energy), NSStringFromPoint(old_total_kinetic_energy));
 //    if (NSEqualPoints (old_total_kinetic_energy, total_kinetic_energy)) break;
 
  //   old_total_kinetic_energy = total_kinetic_energy;

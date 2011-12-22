@@ -39,17 +39,15 @@
   [transform concat]; 
 
   [tree drawCellsWithLevel:0];
-  NSLog (@"%s waiting for lock", __FUNCTION__);
+
   [lock lock];
-  NSLog (@"%s locked", __FUNCTION__);
   if (graph){
     [[NSColor redColor] set];
     Agnode_t *node = agfstnode(graph);
     while (node){
       NSRect r = NSMakeRect (ND_coord(node).x,ND_coord(node).y,10,10);
-      NSRectFill(r);
-      // NSLog (@"drawing %s", node->name);
-
+      NSBezierPath *p = [NSBezierPath bezierPathWithRect: r];
+      [p stroke];
 
       Agedge_t *edge = agfstedge (graph, node);
       while (edge){
@@ -69,7 +67,6 @@
       node = agnxtnode(graph, node);
     }
   }
-  NSLog (@"%s unlock", __FUNCTION__);
   [lock unlock];
 
   [transform invert];
