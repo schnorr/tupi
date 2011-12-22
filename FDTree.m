@@ -175,9 +175,12 @@
           NSEqualPoints(particle, NSZeroPoint));
 }
 
+/**
+ * This function removes the children that are empty (no particles on them).
+ */
 - (void) clean
 {
-  NSMutableSet *removal = [NSMutableSet set];
+  NSMutableSet *removal = [[NSMutableSet alloc] init];
   NSEnumerator *e = [children objectEnumerator];
   FDTree *child;
   while ((child = [e nextObject])){
@@ -189,6 +192,7 @@
   while ((child = [e nextObject])){
     [children removeObject: child];
   }
+  [removal release];
 
   //iterate
   e = [children objectEnumerator];
