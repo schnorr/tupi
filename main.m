@@ -176,9 +176,7 @@
     [NSThread sleepForTimeInterval: .1];
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    NSLog (@"%s waiting for lock", __FUNCTION__);
     [lock lock];
-    NSLog (@"%s locked", __FUNCTION__);
 
     Agnode_t *node = agfstnode(graph);
     NSRect bounds = NSZeroRect;
@@ -188,7 +186,12 @@
       node = agnxtnode(graph, node);
     }
 
-    FDTree *t = [[FDTree alloc] initWithCell: bounds parent: nil];
+    if (tree){
+      [tree release];
+    }
+    tree = [[FDTree alloc] initWithCell: bounds parent: nil];
+    [view setTree: tree];
+    FDTree *t = tree;
     node = agfstnode(graph);
     while(node){
       NSPoint np = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
@@ -208,16 +211,13 @@
     node = agfstnode(graph);
     while(node){
       NSPoint np = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
-      // NSLog (@"calculating for node %s (%@)", node->name, NSStringFromPoint(np));
       NSPoint force = [t coulombRepulsionOfParticle:np
                                              charge:charge
                                            accuracy:1];
-      NSLog (@"p=%s force=%@", node->name, // NSStringFromPoint(np),
-             NSStringFromPoint(force));
       if(0){
-      Agedge_t *edge = agfstin(graph,node);
-      while (edge){
-        Agnode_t *n2 = node == edge->head ? edge->tail : edge->head;
+        Agedge_t *edge = agfstin(graph,node);
+        while (edge){
+          Agnode_t *n2 = node == edge->head ? edge->tail : edge->head;
           NSPoint n1p = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
           NSPoint n2p = NSMakePoint (ND_coord(n2).x, ND_coord(n2).y);
           NSPoint dif = NSSubtractPoints (n1p, n2p);
@@ -228,13 +228,11 @@
           force = NSAddPoints (force,
                                LMSMultiplyPoint (LMSNormalizePoint(dif),
                                                  hooke_attraction));
-
-        // NSLog (@"IN node=%p(%s), edge=%p (%s)\n", node, node->name, edge, n2->name);
-        edge = agnxtin(graph,edge);
-      }
-      edge = agfstout(graph,node);
-      while (edge){
-        Agnode_t *n2 = node == edge->head ? edge->tail : edge->head;
+          edge = agnxtin(graph,edge);
+        }
+        edge = agfstout(graph,node);
+        while (edge){
+          Agnode_t *n2 = node == edge->head ? edge->tail : edge->head;
           NSPoint n1p = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
           NSPoint n2p = NSMakePoint (ND_coord(n2).x, ND_coord(n2).y);
           NSPoint dif = NSSubtractPoints (n1p, n2p);
@@ -245,14 +243,12 @@
           force = NSAddPoints (force,
                                LMSMultiplyPoint (LMSNormalizePoint(dif),
                                                  hooke_attraction));
-
-
-        // NSLog (@"OUT node=%p(%s), edge=%p (%s)\n", node, node->name, edge, n2->name);
-        edge = agnxtout(graph,edge);
+          edge = agnxtout(graph,edge);
+        }
       }
-    }
 
 
+/*
       //hack for attraction
       Agnode_t *n2 = agfstnode(graph);
       while (n2){
@@ -282,7 +278,6 @@
 
       node = agnxtnode(graph,node);
     }
-    NSLog (@"%s unlock", __FUNCTION__);
     [lock unlock];
     [t release];
 
