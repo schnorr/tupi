@@ -142,15 +142,9 @@ static double gettime ()
   lock = [[NSConditionLock alloc] initWithCondition: 0];
   NSThread *thread = [[NSThread alloc] initWithTarget: self
                                              selector:
-                                         @selector(forceDirectedAlgorithmV1:)
+                                         @selector(forceDirectedAlgorithmV2:)
                                                object: nil];
   [thread start];
-
-  // NSThread *thread = [[NSThread alloc] initWithTarget: self
-  //                                            selector:
-  //                                        @selector(forceDirectedAlgorithmV2:)
-  //                                              object: nil];
-  // [thread start];
 
   [view setGraph: graph withConditionLock: lock];
 }
