@@ -176,7 +176,7 @@
     [NSThread sleepForTimeInterval: .1];
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    [lock lock];
+   [lock lock];
 
     Agnode_t *node = agfstnode(graph);
     NSRect bounds = NSZeroRect;
@@ -200,8 +200,6 @@
       node = agnxtnode(graph,node);
     }
     [t clean];
-
-    // [t printWithDepth: 0];
 
     // calculate forces
     float spring = [springSlider floatValue];
@@ -267,6 +265,7 @@
         }
         n2 = agnxtnode(graph,n2);
       }
+*/
 
       NSPoint velocity = NSMakePoint (atof(agget (node, "dx")),
                                       atof(agget (node, "dy")));
@@ -278,8 +277,7 @@
 
       node = agnxtnode(graph,node);
     }
-    [lock unlock];
-    [t release];
+   [lock unlock];
 
     //update view?
     NSDate *now = [NSDate dateWithTimeIntervalSinceNow: 0];
