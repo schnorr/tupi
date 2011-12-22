@@ -173,7 +173,7 @@
 
   int i;
   while (![[NSThread currentThread] isCancelled]){
-//    [NSThread sleepForTimeInterval: .1];
+    [NSThread sleepForTimeInterval: .1];
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     NSLog (@"%s waiting for lock", __FUNCTION__);
