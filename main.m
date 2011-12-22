@@ -24,6 +24,7 @@
 #include "ForceDirectedView.h"
 #include "NSPointFunctions.h"
 #include "FDTree.h"
+#include "GraphNode.h"
 
 @interface ForceDirectedDelegate : NSObject
 {
@@ -44,7 +45,9 @@
   //for lock
   NSConditionLock *lock;
 
-  //graph
+  //the nodes of the graph (instances of GraphNode)
+  NSMutableDictionary *graphx;
+
   Agraph_t *graph;
 
   FDTree *tree;
@@ -58,13 +61,8 @@
 @end
 
 @implementation ForceDirectedDelegate : NSObject 
-- (void) applicationDidFinishLaunching: (NSNotification *)not;
+- (void) applicationWillFinishLaunching: (NSNotification *)not
 {
-  [NSBundle loadGSMarkupNamed: @"ForceDirected"  owner: self];
-  [window makeKeyAndOrderFront: self];
-  [window setDelegate: self];
-  [self updateLabels: self];
-
   //get the dot file as argument
   NSArray *args = [[NSProcessInfo processInfo] arguments];
   if ([args count] < 2){
@@ -77,36 +75,87 @@
     NSLog (@"Could not open file %@", dot);
     [[NSApplication sharedApplication] terminate:self];
   }
-  graph = agread (file);
-  if (!graph){
+  Agraph_t *g = agread (file);
+  if (!g){
     NSLog (@"Could not read a graph from file %@ (agread)", dot);
     [[NSApplication sharedApplication] terminate:self];
   }
 
+  //reading nodes/edges
+  graphx = [[NSMutableDictionary alloc] init];
+  Agnode_t *n1 = agfstnode (g);
+  while (n1){
+    NSString *name1 = [NSString stringWithFormat: @"%s", n1->name];
+    GraphNode *node1 = [graphx objectForKey: name1];
+    if (!node1){
+      node1 = [[GraphNode alloc] init];
+      [node1 setName: name1];
+      [graphx setObject: node1 forKey: name1];
+      [node1 release];
+    }
+
+    for (Agnode_t *n2 = agfstnode (g); n2; n2 = agnxtnode (g, n2)){
+      if (agfindedge (g, n1, n2)){
+        //n1 and n2 are connected
+        NSString *name2 = [NSString stringWithFormat: @"%s", n2->name];
+        GraphNode *node2 = [graphx objectForKey: name2];
+        if (!node2){
+          node2 = [[GraphNode alloc] init];
+          [node2 setName: name2];
+          [graphx setObject: node2 forKey: name2];
+          [node2 release];
+        }
+        [node1 addConnectedNode: node2];
+        [node2 addConnectedNode: node1];
+      }
+    }
+    n1 = agnxtnode (g, n1);
+  }
+  agclose(g);
+
+  NSEnumerator *en = [graphx objectEnumerator];
+  GraphNode *n;
+  while ((n = [en nextObject])){
+    NSLog (@"%@ %@", n, [n connectedNodes]);
+  }
+
+  [[NSApplication sharedApplication] terminate:self];
+
+}
+
+
+- (void) applicationDidFinishLaunching: (NSNotification *)not;
+{
+  [NSBundle loadGSMarkupNamed: @"ForceDirected"  owner: self];
+  [window makeKeyAndOrderFront: self];
+  [window setDelegate: self];
+  [self updateLabels: self];
+
+
   //set random positions of all nodes based on view bounds
   [self resetPositions: self];
 
-
   //launch thread
   lock = [[NSConditionLock alloc] initWithCondition: 0];
-  // NSThread *thread = [[NSThread alloc] initWithTarget: self
-  //                                            selector:
-  //                                        @selector(forceDirectedAlgorithmV1:)
-  //                                              object: nil];
-  //[thread start];
-
   NSThread *thread = [[NSThread alloc] initWithTarget: self
                                              selector:
-                                         @selector(forceDirectedAlgorithmV2:)
+                                         @selector(forceDirectedAlgorithmV1:)
                                                object: nil];
   [thread start];
+
+  // NSThread *thread = [[NSThread alloc] initWithTarget: self
+  //                                            selector:
+  //                                        @selector(forceDirectedAlgorithmV2:)
+  //                                              object: nil];
+  // [thread start];
 
   [view setGraph: graph withConditionLock: lock];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
-  agclose(graph);
+  NSLog (@"leaving...");
+  [graphx release];
 }
 
 - (void) updateLabels: (id) sender
