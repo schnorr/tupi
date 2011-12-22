@@ -46,9 +46,7 @@
   NSConditionLock *lock;
 
   //the nodes of the graph (instances of GraphNode)
-  NSMutableDictionary *graphx;
-
-  Agraph_t *graph;
+  NSMutableDictionary *graph;
 
   FDTree *tree;
 }
@@ -82,15 +80,15 @@
   }
 
   //reading nodes/edges
-  graphx = [[NSMutableDictionary alloc] init];
+  graph = [[NSMutableDictionary alloc] init];
   Agnode_t *n1 = agfstnode (g);
   while (n1){
     NSString *name1 = [NSString stringWithFormat: @"%s", n1->name];
-    GraphNode *node1 = [graphx objectForKey: name1];
+    GraphNode *node1 = [graph objectForKey: name1];
     if (!node1){
       node1 = [[GraphNode alloc] init];
       [node1 setName: name1];
-      [graphx setObject: node1 forKey: name1];
+      [graph setObject: node1 forKey: name1];
       [node1 release];
     }
 
@@ -98,11 +96,11 @@
       if (agfindedge (g, n1, n2)){
         //n1 and n2 are connected
         NSString *name2 = [NSString stringWithFormat: @"%s", n2->name];
-        GraphNode *node2 = [graphx objectForKey: name2];
+        GraphNode *node2 = [graph objectForKey: name2];
         if (!node2){
           node2 = [[GraphNode alloc] init];
           [node2 setName: name2];
-          [graphx setObject: node2 forKey: name2];
+          [graph setObject: node2 forKey: name2];
           [node2 release];
         }
         [node1 addConnectedNode: node2];
@@ -113,16 +111,12 @@
   }
   agclose(g);
 
-  NSEnumerator *en = [graphx objectEnumerator];
+  NSEnumerator *en = [graph objectEnumerator];
   GraphNode *n;
   while ((n = [en nextObject])){
     NSLog (@"%@ %@", n, [n connectedNodes]);
   }
-
-  [[NSApplication sharedApplication] terminate:self];
-
 }
-
 
 - (void) applicationDidFinishLaunching: (NSNotification *)not;
 {
@@ -130,7 +124,6 @@
   [window makeKeyAndOrderFront: self];
   [window setDelegate: self];
   [self updateLabels: self];
-
 
   //set random positions of all nodes based on view bounds
   [self resetPositions: self];
@@ -155,7 +148,7 @@
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
   NSLog (@"leaving...");
-  [graphx release];
+  [graph release];
 }
 
 - (void) updateLabels: (id) sender
@@ -196,147 +189,115 @@
 
 - (void) resetPositions: (id) sender
 {
-  //srand48(time(NULL));
+  srand48(0);
+
+  // set up initial node velocities to (0,0)
+  // Agnode_t *n1 = agfstnode (graph);
+  // while (n1){
+  //   agsafeset (n1, "dx", "0", "0");
+  //   agsafeset (n1, "dy", "0", "0");
+  //   n1 = agnxtnode (graph, n1);
+  // }
+
   NSRect bounds = [view bounds];
-  Agnode_t *node = agfstnode (graph);
-  while (node){
-    ND_coord(node).x = bounds.size.width * drand48();
-    ND_coord(node).y = bounds.size.height * drand48();
-    node = agnxtnode (graph, node);
+  NSEnumerator *en = [graph objectEnumerator];
+  GraphNode *node;
+  while ((node = [en nextObject])){
+    NSPoint newPosition = NSMakePoint (bounds.size.width * drand48(),
+                                       bounds.size.height * drand48());
+    [node setPosition: newPosition];
+    NSLog (@"%@ %@", node, NSStringFromPoint ([node position]));
   }
+  [view setNeedsDisplay: YES];
 }
 
 - (void) forceDirectedAlgorithmV2: (id) sender
 {
   if (!graph) return;
-
   NSDate *lastViewUpdate = [NSDate distantPast];
 
-  // set up initial node velocities to (0,0)
-  Agnode_t *node = agfstnode (graph);
-  while (node){
-    agsafeset (node, "dx", "0", "0");
-    agsafeset (node, "dy", "0", "0");
-    node = agnxtnode (graph, node);
-  }
-
-  int i;
   while (![[NSThread currentThread] isCancelled]){
     [NSThread sleepForTimeInterval: .1];
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-   [lock lock];
+    [lock lock];
 
-    Agnode_t *node = agfstnode(graph);
-    NSRect bounds = NSZeroRect;
-    while(node){
-      NSRect np = NSMakeRect (ND_coord(node).x, ND_coord(node).y, 1, 1);
-      bounds = NSUnionRect(bounds, np);
-      node = agnxtnode(graph, node);
+    //define bounds for barnes-hut root cell
+    NSRect rootCellbounds = NSZeroRect;
+    NSEnumerator *en = [graph objectEnumerator];
+    GraphNode *node;
+    while ((node = [en nextObject])){
+      NSPoint p = [node position];
+      NSRect np = NSMakeRect (p.x, p.y, 1, 1);
+      rootCellbounds = NSUnionRect(rootCellbounds, np);
     }
 
+    //create/clean-up a new barnes-hut tree by adding particles one at a time
     if (tree){
       [tree release];
     }
-    tree = [[FDTree alloc] initWithCell: bounds parent: nil];
+    tree = [[FDTree alloc] initWithCell: rootCellbounds parent: nil];
     [view setTree: tree];
     FDTree *t = tree;
-    node = agfstnode(graph);
-    while(node){
-      NSPoint np = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
-      // NSLog (@"adding particle %@", NSStringFromPoint(np));
-      [t addParticle: np];
-      node = agnxtnode(graph,node);
+    en = [graph objectEnumerator];
+    while ((node = [en nextObject])){
+      [t addParticle: [node position]];
     }
-    [t clean];
+    [t clean];    //tree clean-up, remove empty cells
 
     // calculate forces
     float spring = [springSlider floatValue];
     float charge = [chargeSlider floatValue];
     float damping = [dampingSlider floatValue];
 
-    node = agfstnode(graph);
-    while(node){
-      NSPoint np = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
-      NSPoint force = [t coulombRepulsionOfParticle:np
+T1
+    en = [graph objectEnumerator];
+    while ((node = [en nextObject])){
+      NSPoint force = [t coulombRepulsionOfParticle:[node position]
                                              charge:charge
                                            accuracy:1];
-      if(0){
-        Agedge_t *edge = agfstin(graph,node);
-        while (edge){
-          Agnode_t *n2 = node == edge->head ? edge->tail : edge->head;
-          NSPoint n1p = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
-          NSPoint n2p = NSMakePoint (ND_coord(n2).x, ND_coord(n2).y);
-          NSPoint dif = NSSubtractPoints (n1p, n2p);
-          double distance = LMSDistanceBetweenPoints (n1p, n2p);
 
-          //hooke_attraction (-k * x)
-          double hooke_attraction = 1 - (fabs (distance - spring) / spring);
-          force = NSAddPoints (force,
-                               LMSMultiplyPoint (LMSNormalizePoint(dif),
-                                                 hooke_attraction));
-          edge = agnxtin(graph,edge);
-        }
-        edge = agfstout(graph,node);
-        while (edge){
-          Agnode_t *n2 = node == edge->head ? edge->tail : edge->head;
-          NSPoint n1p = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
-          NSPoint n2p = NSMakePoint (ND_coord(n2).x, ND_coord(n2).y);
-          NSPoint dif = NSSubtractPoints (n1p, n2p);
-          double distance = LMSDistanceBetweenPoints (n1p, n2p);
+      //upper-bound for repulsion
+      if (fabs(force.x) > 10) force.x = 10*(force.x/force.x);
+      if (fabs(force.y) > 10) force.y = 10*(force.y/force.y);
 
-          //hooke_attraction (-k * x)
-          double hooke_attraction = 1 - (fabs (distance - spring) / spring);
-          force = NSAddPoints (force,
-                               LMSMultiplyPoint (LMSNormalizePoint(dif),
-                                                 hooke_attraction));
-          edge = agnxtout(graph,edge);
-        }
+      //spring
+      NSEnumerator *connectedEn = [[node connectedNodes] objectEnumerator];
+      GraphNode *connectedNode;
+      while ((connectedNode = [connectedEn nextObject])){
+        NSPoint n1p = [node position];
+        NSPoint n2p = [connectedNode position];
+        NSPoint dif = NSSubtractPoints (n1p, n2p);
+        double distance = LMSDistanceBetweenPoints (n1p, n2p);
+
+        //hooke_attraction (-k * x)
+        double hooke_attraction = 1 - (fabs (distance - spring) / spring);
+        force = NSAddPoints (force,
+                             LMSMultiplyPoint (LMSNormalizePoint(dif),
+                                               hooke_attraction));
       }
 
-
-/*
-      //hack for attraction
-      Agnode_t *n2 = agfstnode(graph);
-      while (n2){
-        if (agfindedge(graph,node,n2) || agfindedge(graph,n2,node)){
-
-          NSPoint n1p = NSMakePoint (ND_coord(node).x, ND_coord(node).y);
-          NSPoint n2p = NSMakePoint (ND_coord(n2).x, ND_coord(n2).y);
-          NSPoint dif = NSSubtractPoints (n1p, n2p);
-          double distance = LMSDistanceBetweenPoints (n1p, n2p);
-
-          //hooke_attraction (-k * x)
-          double hooke_attraction = 1 - (fabs (distance - spring) / spring);
-          force = NSAddPoints (force,
-                               LMSMultiplyPoint (LMSNormalizePoint(dif),
-                                                 hooke_attraction));
-        }
-        n2 = agnxtnode(graph,n2);
-      }
-*/
-
-      NSPoint velocity = NSMakePoint (atof(agget (node, "dx")),
-                                      atof(agget (node, "dy")));
+      NSPoint velocity = NSZeroPoint;
       velocity = NSAddPoints (velocity, force);
       velocity = LMSMultiplyPoint (velocity, damping);
  
-      ND_coord(node).x = ND_coord(node).x + velocity.x;
-      ND_coord(node).y = ND_coord(node).y + velocity.y;
-
-      node = agnxtnode(graph,node);
+      [node setPosition: NSAddPoints([node position], velocity)];
     }
+T2
+  // exit(1);
    [lock unlock];
 
-    //update view?
-    NSDate *now = [NSDate dateWithTimeIntervalSinceNow: 0];
-    double difTime = [now timeIntervalSinceDate: lastViewUpdate];
-    if (difTime > 0.01){
-      [lastViewUpdate release];
-      lastViewUpdate = now;
-      [view setNeedsDisplay: YES];
-    }
-    [lastViewUpdate retain];
+   if(1){
+     //update view?
+     NSDate *now = [NSDate dateWithTimeIntervalSinceNow: 0];
+     double difTime = [now timeIntervalSinceDate: lastViewUpdate];
+     if (difTime > 0.01){
+       [lastViewUpdate release];
+       lastViewUpdate = now;
+       [view setNeedsDisplay: YES];
+     }
+     [lastViewUpdate retain];
+   }
 
     [pool release];
   }
@@ -348,40 +309,31 @@
 
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-  Agnode_t *n1, *n2;
   NSDate *lastViewUpdate = [NSDate distantPast];
 
-  // set up initial node velocities to (0,0)
-  n1 = agfstnode (graph);
-  while (n1){
-    agsafeset (n1, "dx", "0", "0");
-    agsafeset (n1, "dy", "0", "0");
-    n1 = agnxtnode (graph, n1);
-  }
-
   while (![[NSThread currentThread] isCancelled]){
+    [NSThread sleepForTimeInterval: .1];
 
     float spring = [springSlider floatValue];
     float charge = [chargeSlider floatValue];
     float damping = [dampingSlider floatValue];
 
     // running sum of total kinetic energy over all particles
-    NSPoint total_kinetic_energy = NSMakePoint (0,0);
-    total_kinetic_energy = NSMakePoint(0,0);
 
     [lock lock];
+    NSEnumerator *en1 = [graph objectEnumerator];
+    GraphNode *n1;
+    while ((n1 = [en1 nextObject])){
 
-    n1 = agfstnode (graph);
-    while (n1){
-      //NSString *name = [NSString stringWithFormat: @"%s", n1->name];
       // running sum of total force on this particular node
       NSPoint force = NSMakePoint (0, 0);
 
-      n2 = agfstnode (graph);
-      while (n2){
+      NSEnumerator *en2 = [graph objectEnumerator];
+      GraphNode *n2;
+      while ((n2 = [en2 nextObject])){
         //distance between particles
-        NSPoint n1p = NSMakePoint (ND_coord(n1).x, ND_coord(n1).y);
-        NSPoint n2p = NSMakePoint (ND_coord(n2).x, ND_coord(n2).y);
+        NSPoint n1p = [n1 position];
+        NSPoint n2p = [n2 position];
         NSPoint dif = NSSubtractPoints (n1p, n2p);
         double distance = LMSDistanceBetweenPoints (n1p, n2p);
 
@@ -397,7 +349,7 @@
           double q2 = charge;
           coulomb_repulsion = coulomb_constant * (q1*q2)/(r*r);
  
-          if (agfindedge (graph, n1, n2)){
+          if ([n1 isConnectedTo: n2]){
             //hooke_attraction (-k * x)
             hooke_attraction = 1 - (fabs (distance - spring) / spring);
           }
@@ -408,24 +360,13 @@
                                LMSMultiplyPoint (LMSNormalizePoint(dif),
                                                  hooke_attraction));
         }
-        n2 = agnxtnode (graph, n2);
       }
 
-      NSPoint velocity = NSMakePoint (0,0);// atof(agget (n1, "dx")),
-                                      // atof(agget (n1, "dy")));
+      NSPoint velocity = NSZeroPoint;
       velocity = NSAddPoints (velocity, force);
       velocity = LMSMultiplyPoint (velocity, damping);
- 
-      ND_coord(n1).x = ND_coord(n1).x + velocity.x;
-      ND_coord(n1).y = ND_coord(n1).y + velocity.y;
- 
-      //save velocity?
-
-      total_kinetic_energy = NSAddPoints (total_kinetic_energy, velocity); 
-
-      n1 = agnxtnode (graph, n1);
+      [n1 setPosition: NSAddPoints([n1 position], velocity)];
     }
-
     [lock unlock];
 
     //update view?

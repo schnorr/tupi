@@ -24,7 +24,7 @@
   return self;
 }
 
-- (void) setGraph: (Agraph_t *)g withConditionLock: (NSConditionLock*)l
+- (void) setGraph: (NSDictionary*)g withConditionLock: (NSConditionLock *)l;
 {
   graph = g;
   lock = l;
@@ -32,39 +32,39 @@
 
 - (void) drawRect: (NSRect)frame
 {
+  if (!graph) return;
+
   [[NSColor whiteColor] set];
   NSRectFill([self bounds]);
+  [[NSColor redColor] set];
 
   NSAffineTransform* transform = [self transform];
   [transform concat]; 
 
-  [tree drawCellsWithLevel:0];
+  // [tree drawCellsWithLevel:0];
 
   [lock lock];
-  if (graph){
-    [[NSColor redColor] set];
-    Agnode_t *node = agfstnode(graph);
-    while (node){
-      NSRect r = NSMakeRect (ND_coord(node).x,ND_coord(node).y,10,10);
-      NSBezierPath *p = [NSBezierPath bezierPathWithRect: r];
-      [p stroke];
+  NSEnumerator *en = [graph objectEnumerator];
+  GraphNode *node;
+  while ((node = [en nextObject])){
+    NSPoint pos = [node position];
+    NSRect r = NSMakeRect (pos.x, pos.y, 10, 10);
+    NSBezierPath *p = [NSBezierPath bezierPathWithRect: r];
+    [p stroke];
 
-      Agedge_t *edge = agfstedge (graph, node);
-      while (edge){
-        NSPoint src, dst;
-        src.x = ND_coord(edge->head).x+10/2;
-        src.y = ND_coord(edge->head).y+10/2;
-        dst.x = ND_coord(edge->tail).x+10/2;
-        dst.y = ND_coord(edge->tail).y+10/2;
-        NSBezierPath *path = [NSBezierPath bezierPath];
-        [path moveToPoint: src];
-        [path lineToPoint: dst];
-        [path stroke];
-
-        edge = agnxtedge (graph, edge, node);
-      }
-
-      node = agnxtnode(graph, node);
+    NSEnumerator *connectedEn = [[node connectedNodes] objectEnumerator];
+    GraphNode *connectedNode;
+    while ((connectedNode = [connectedEn nextObject])){
+      NSPoint connectedNodePosition = [connectedNode position];
+      NSPoint src, dst;
+      src.x = pos.x+10/2;
+      src.y = pos.y+10/2;
+      dst.x = connectedNodePosition.x+10/2;
+      dst.y = connectedNodePosition.y+10/2;
+      NSBezierPath *path = [NSBezierPath bezierPath];
+      [path moveToPoint: src];
+      [path lineToPoint: dst];
+      [path stroke];
     }
   }
   [lock unlock];

@@ -19,16 +19,15 @@
 #include <AppKit/AppKit.h>
 #include "BasicView.h"
 #include "FDTree.h"
-#include <graphviz/types.h>
-#include <graphviz/graph.h>
+#include "GraphNode.h"
 
 @interface ForceDirectedView : BasicView
 {
-  Agraph_t *graph;
   NSConditionLock *lock;
   FDTree *tree;
+  NSDictionary *graph;
 }
-- (void) setGraph: (Agraph_t *)g withConditionLock: (NSConditionLock *)l;
+- (void) setGraph: (NSDictionary*)g withConditionLock: (NSConditionLock *)l;
 - (void) setTree: (FDTree*) t;
 @end
 
