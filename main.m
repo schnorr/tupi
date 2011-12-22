@@ -21,10 +21,21 @@
 #include <graphviz/graph.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 #include "ForceDirectedView.h"
 #include "NSPointFunctions.h"
 #include "FDTree.h"
 #include "GraphNode.h"
+
+static double gettime ()
+{
+        struct timeval tr;
+        gettimeofday(&tr, NULL);
+        return (double)tr.tv_sec+(double)tr.tv_usec/1000000;
+}
+
+#define T1 double t1 = gettime();
+#define T2 NSLog (@"time elapsed: %f (seconds)", gettime()-t1);
 
 @interface ForceDirectedDelegate : NSObject
 {
