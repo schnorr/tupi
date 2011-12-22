@@ -257,10 +257,6 @@ T1
                                              charge:charge
                                            accuracy:1];
 
-      //upper-bound for repulsion
-      if (fabs(force.x) > 10) force.x = 10*(force.x/force.x);
-      if (fabs(force.y) > 10) force.y = 10*(force.y/force.y);
-
       //spring
       NSEnumerator *connectedEn = [[node connectedNodes] objectEnumerator];
       GraphNode *connectedNode;
