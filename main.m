@@ -52,7 +52,6 @@
 }
 - (void) updateLabels: (id) sender;
 - (void) resetPositions: (id) sender;
-- (void) applyForceDirected: (id) sender;
 - (void) exportPositions: (id) sender;
 - (void) forceDirectedAlgorithmV1: (id) sender;
 - (void) forceDirectedAlgorithmV2: (id) sender;
@@ -156,30 +155,6 @@
   [springLabel setFloatValue: [springSlider floatValue]];
   [chargeLabel setFloatValue: [chargeSlider floatValue]];
   [dampingLabel setFloatValue: [dampingSlider floatValue]];
-}
-
-- (void) applyForceDirected: (id) sender
-{
-  double spring = [springSlider floatValue];
-  double charge = [chargeSlider floatValue];
-  double damping = [dampingSlider floatValue];
-  double kinetic_energy = 0;// [view applyForceDirectedWithSpring: spring
-                            //                        andCharge: charge
-                            //                       andDamping: damping];
-  [timer invalidate];
-  if (kinetic_energy < 0.001){
-    timer = [NSTimer scheduledTimerWithTimeInterval: 2
-                                    target: self
-                                  selector: @selector(applyForceDirected:)
-                                  userInfo: nil
-                                   repeats: YES];
-  }else{
-    timer = [NSTimer scheduledTimerWithTimeInterval: 0.05
-                                    target: self
-                                  selector: @selector(applyForceDirected:)
-                                  userInfo: nil
-                                   repeats: YES];
-  }
 }
 
 - (void) exportPositions: (id) sender
