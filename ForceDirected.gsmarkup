@@ -25,7 +25,7 @@
                                   <slider id="chargeSlider"
                                           action="updateLabels:"
                                           min="0"
-                                          current="100"
+                                          current="0"
                                           max="100"/>
                                   <label id="chargeLabel"/>
           <label>Damping</label>
