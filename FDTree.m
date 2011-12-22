@@ -243,17 +243,21 @@
 
 - (void) drawCellsWithLevel:(int)level;
 {
-  NSBezierPath *path = [NSBezierPath bezierPathWithRect: mycell];
-  [[NSColor blueColor] set];
-  [path stroke];
+  if (![children count]){
+    NSBezierPath *path = [NSBezierPath bezierPathWithRect: mycell];
+    [[NSColor blueColor] set];
+    [path stroke];
 
-  double size = pseudoParticleCharge/3;
-  [[NSColor yellowColor] set];
-  NSRect r = NSMakeRect(pseudoParticle.x-size/2, pseudoParticle.y-size/2, size, size);
-  NSRectFill(r);
+    double size = pseudoParticleCharge/5;
+    [[NSColor yellowColor] set];
+    NSRect r = NSMakeRect(pseudoParticle.x-size/2, pseudoParticle.y-size/2, size, size);
+    NSRectFill(r);
 
-  [[NSString stringWithFormat: @"%d", level] drawAtPoint: pseudoParticle
-                                          withAttributes: nil];
+    [[NSString stringWithFormat: @"%d", level] drawAtPoint: NSMakePoint (pseudoParticle.x,
+                                                                         pseudoParticle.y+size)
+                                            withAttributes: nil];
+
+  }
 
   NSEnumerator *e = [children objectEnumerator];
   FDTree *child;
