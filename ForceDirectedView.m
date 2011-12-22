@@ -36,12 +36,11 @@
 
   [[NSColor whiteColor] set];
   NSRectFill([self bounds]);
-  [[NSColor redColor] set];
 
   NSAffineTransform* transform = [self transform];
   [transform concat]; 
 
-  // [tree drawCellsWithLevel:0];
+  [[NSColor redColor] set];
 
   [lock lock];
   NSEnumerator *en = [graph objectEnumerator];
@@ -67,7 +66,11 @@
       [path stroke];
     }
   }
+
+
+  [tree drawCellsWithLevel:0];
   [lock unlock];
+
 
   [transform invert];
   [transform concat];
