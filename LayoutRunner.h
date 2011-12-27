@@ -14,24 +14,19 @@
     You should have received a copy of the GNU General Public License
     along with ForceDirected.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __GRAPHNODE_H__
-#define __GRAPHNODE_H__
+#ifndef __LAYOUTRUNNER_H__
+#define __LAYOUTRUNNER_H__
 #include <Foundation/Foundation.h>
+#
+#include "Layout.h"
 
-@interface GraphNode : NSObject
+@interface LayoutRunner : NSObject
 {
-  NSPoint pos;
-  NSMutableSet *connected;
-  NSString *name;
+  Layout *layout;
+  id provider;
 }
-- (NSPoint) position;
-- (void) setPosition: (NSPoint) newPosition;
-- (NSSet *) connectedNodes;
-- (void) addConnectedNode: (GraphNode*) n;
-- (BOOL) isConnectedTo: (GraphNode *) n;
-- (void) setName: (NSString*) newName;
-- (NSString *) name;
+- (void) setProvider: (id) prov;
+- (void) setLayout: (Layout*)l;
 @end
-
 
 #endif

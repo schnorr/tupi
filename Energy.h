@@ -14,24 +14,23 @@
     You should have received a copy of the GNU General Public License
     along with ForceDirected.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __GRAPHNODE_H__
-#define __GRAPHNODE_H__
+#ifndef __ENERGY_H__
+#define __ENERGY_H__
 #include <Foundation/Foundation.h>
 
-@interface GraphNode : NSObject
+@interface Energy : NSObject
 {
-  NSPoint pos;
-  NSMutableSet *connected;
-  NSString *name;
+  NSMutableArray *energies;
+  double lastEnergy;
+  double energy;
+  int length;
 }
-- (NSPoint) position;
-- (void) setPosition: (NSPoint) newPosition;
-- (NSSet *) connectedNodes;
-- (void) addConnectedNode: (GraphNode*) n;
-- (BOOL) isConnectedTo: (GraphNode *) n;
-- (void) setName: (NSString*) newName;
-- (NSString *) name;
+- (void) add: (double) e;
+- (void) store;
+- (void) clear;
+- (double) energy;
+- (double) stabilization;
+- (double) average;
 @end
-
 
 #endif

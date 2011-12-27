@@ -90,4 +90,16 @@ static inline NSPoint LMSMultiplyPoint (NSPoint p, double val)
         return NSMakePoint (p.x * val, p.y *val);
 }
 
+static inline double LMSDiagonalRect (NSRect area)
+{
+  return LMSDistanceBetweenPoints (area.origin,
+                                   NSMakePoint(area.origin.x + area.size.width,
+                                               area.origin.y + area.size.height));
+}
+
+static inline NSRect LMSGrowCenterPoint (NSPoint p, double val)
+{
+  return NSMakeRect (p.x-val, p.y-val, 2*val, 2*val);
+}
+
 #endif

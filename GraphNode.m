@@ -70,4 +70,9 @@
 {
   return [name description];
 }
+
+- (NSString *) name
+{
+  return name;
+}
 @end

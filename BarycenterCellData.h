@@ -14,24 +14,24 @@
     You should have received a copy of the GNU General Public License
     along with ForceDirected.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __GRAPHNODE_H__
-#define __GRAPHNODE_H__
+#ifndef __BARYCENTERCELLDATA_H__
+#define __BARYCENTERCELLDATA_H__
 #include <Foundation/Foundation.h>
+#include "CellData.h"
+#include "Cell.h"
 
-@interface GraphNode : NSObject
+@class Cell;
+@class BarycenterCellData;
+
+@interface BarycenterCellData : NSObject <CellData>
 {
-  NSPoint pos;
-  NSMutableSet *connected;
-  NSString *name;
+  NSPoint center;
+  double weight;
+  Cell *cell;
 }
-- (NSPoint) position;
-- (void) setPosition: (NSPoint) newPosition;
-- (NSSet *) connectedNodes;
-- (void) addConnectedNode: (GraphNode*) n;
-- (BOOL) isConnectedTo: (GraphNode *) n;
-- (void) setName: (NSString*) newName;
-- (NSString *) name;
+- (NSPoint) center;
+- (double) weight;
+- (Cell *) cell;
+- (double) distanceFromPosition: (NSPoint)pos;
 @end
-
-
 #endif

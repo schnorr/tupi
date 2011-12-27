@@ -14,24 +14,35 @@
     You should have received a copy of the GNU General Public License
     along with ForceDirected.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __GRAPHNODE_H__
-#define __GRAPHNODE_H__
+#ifndef __PARTICLEBOX_H__
+#define __PARTICLEBOX_H__
 #include <Foundation/Foundation.h>
+#include "CellSpace.h"
+#include "CellData.h"
+#include "Cell.h"
+#include "NTree.h"
+#include "Particle.h"
 
-@interface GraphNode : NSObject
+@class NTree;
+@class Cell;
+@class Particle;
+
+@interface ParticleBox : NSObject
 {
-  NSPoint pos;
-  NSMutableSet *connected;
-  NSString *name;
+  NSMutableDictionary *particles;
+  NTree *tree;
+  long time; //current time step
 }
-- (NSPoint) position;
-- (void) setPosition: (NSPoint) newPosition;
-- (NSSet *) connectedNodes;
-- (void) addConnectedNode: (GraphNode*) n;
-- (BOOL) isConnectedTo: (GraphNode *) n;
-- (void) setName: (NSString*) newName;
-- (NSString *) name;
+- (id) initWithNodesPerCell: (int)pmax
+                  cellSpace: (id<CellSpace>) space
+                   cellData: (id<CellData>) data;
+- (NSRect) boundingBox;
+- (void) step; //one iteration
+- (NSArray*) allParticles;
+- (void) removeAllParticles;
+- (void) addParticle: (Particle *)p;
+- (void) removeParticle: (Particle *)p;
+- (NTree*) tree;
 @end
-
 
 #endif

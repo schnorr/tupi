@@ -14,24 +14,17 @@
     You should have received a copy of the GNU General Public License
     along with ForceDirected.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __GRAPHNODE_H__
-#define __GRAPHNODE_H__
-#include <Foundation/Foundation.h>
+#ifndef __CELLSPACE_H_
+#define __CELLSPACE_H_
 
-@interface GraphNode : NSObject
-{
-  NSPoint pos;
-  NSMutableSet *connected;
-  NSString *name;
-}
-- (NSPoint) position;
-- (void) setPosition: (NSPoint) newPosition;
-- (NSSet *) connectedNodes;
-- (void) addConnectedNode: (GraphNode*) n;
-- (BOOL) isConnectedTo: (GraphNode *) n;
-- (void) setName: (NSString*) newName;
-- (NSString *) name;
+@protocol CellSpace
+- (id) initWithBB: (NSRect) b;
+- (int) getDivisions;
+- (id) newSubCellSpace: (int) i;
+- (BOOL) containsParticle: (id) particle;
+- (NSRect) bb;
+- (void) setBB: (NSRect) b;
+- (double) size;
 @end
-
 
 #endif

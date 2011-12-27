@@ -1,5 +1,5 @@
 /*
-    This file is part of ForceDirected
+    This file is part of ForceDirected.
 
     ForceDirected is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,24 +14,16 @@
     You should have received a copy of the GNU General Public License
     along with ForceDirected.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __GRAPHNODE_H__
-#define __GRAPHNODE_H__
-#include <Foundation/Foundation.h>
+#ifndef __FDVIEW__H__
+#define __FDVIEW__H__
+#include <AppKit/AppKit.h>
+#include "BasicView.h"
 
-@interface GraphNode : NSObject
+@interface FDView : BasicView
 {
-  NSPoint pos;
-  NSMutableSet *connected;
-  NSString *name;
+  id provider;
 }
-- (NSPoint) position;
-- (void) setPosition: (NSPoint) newPosition;
-- (NSSet *) connectedNodes;
-- (void) addConnectedNode: (GraphNode*) n;
-- (BOOL) isConnectedTo: (GraphNode *) n;
-- (void) setName: (NSString*) newName;
-- (NSString *) name;
+- (void) setProvider: (id) p;
 @end
-
 
 #endif

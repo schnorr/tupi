@@ -27,7 +27,7 @@
 #include "FDTree.h"
 #include "GraphNode.h"
 
-static double gettime ()
+double gettime ()
 {
         struct timeval tr;
         gettimeofday(&tr, NULL);
