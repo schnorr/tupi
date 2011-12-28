@@ -26,8 +26,8 @@ static Cell *rootCell = nil;
 }
 
 - (id) initRootTreeWithNodesPerCell: (int)max
-                          cellSpace: (id<CellSpace>)space
-                           cellData: (id<CellData>) data
+                          cellSpace: (QuadTreeCellSpace*)space
+                           cellData: (BarycenterCellData*) data
                         particleBox: (ParticleBox*) pb
 {
   self = [super init];
@@ -66,7 +66,7 @@ static Cell *rootCell = nil;
 - (void) checkDivisions
 {
   if (needResize){
-    id<CellSpace> space = [rootCell space];
+    QuadTreeCellSpace *space = [rootCell space];
     NSRect bb = [space bb];
 
     NSPoint min = minPointForResize;
