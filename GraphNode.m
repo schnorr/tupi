@@ -23,14 +23,15 @@
   pos = NSZeroPoint;
   connected = [[NSMutableSet alloc] init];
   name = nil;
+  particle = nil;
   return self;
 }
 
 - (void) dealloc
 {
-  NSLog (@"%s", __FUNCTION__);
   [connected release];
   [name release];
+  [particle release];
   [super dealloc];
 }
 
@@ -74,5 +75,16 @@
 - (NSString *) name
 {
   return name;
+}
+
+- (void) setParticle: (Particle*)p
+{
+  particle = p;
+  [particle retain];
+}
+
+- (Particle*) particle
+{
+  return particle;
 }
 @end

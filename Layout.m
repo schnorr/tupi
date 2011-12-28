@@ -177,11 +177,13 @@ double gettime ();
   return energy;
 }
 
-- (void) addNode: (id) node withName: (NSString *) nodeName
+- (void) addNode: (GraphNode*) node withName: (NSString *) nodeName
 {
-  Particle *p = [[Particle alloc] initWithName: nodeName
-                                    WithLayout: self
-                                andParticleBox: mainBox];
+  Particle *p = [[Particle alloc] initForGraphNode: node
+                                          WithName: nodeName
+                                        WithLayout: self
+                                    andParticleBox: mainBox];
+  [node setParticle: p];
   [mainBox addParticle: p];
   [p release];
 

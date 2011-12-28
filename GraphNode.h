@@ -17,12 +17,16 @@
 #ifndef __GRAPHNODE_H__
 #define __GRAPHNODE_H__
 #include <Foundation/Foundation.h>
+#include "Particle.h"
+
+@class Particle;
 
 @interface GraphNode : NSObject
 {
   NSPoint pos;
   NSMutableSet *connected;
   NSString *name;
+  Particle *particle; //the corresponding particle in the repulsion/att system
 }
 - (NSPoint) position;
 - (void) setPosition: (NSPoint) newPosition;
@@ -31,6 +35,8 @@
 - (BOOL) isConnectedTo: (GraphNode *) n;
 - (void) setName: (NSString*) newName;
 - (NSString *) name;
+- (void) setParticle: (Particle*)p;
+- (Particle*) particle;
 @end
 
 

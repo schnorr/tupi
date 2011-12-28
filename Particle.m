@@ -18,9 +18,10 @@
 #include "NSPointFunctions.h"
 
 @implementation Particle
-- (id) initWithName: (NSString *)n
-         WithLayout: (Layout*)pb
-     andParticleBox: (ParticleBox*) b
+- (id) initForGraphNode: (GraphNode*) gn
+               WithName: (NSString *)n
+             WithLayout: (Layout*)pb
+         andParticleBox: (ParticleBox*) b
 {
   self = [super init];
   name = n;
@@ -31,7 +32,16 @@
   weight = 1;
   pos = NSMakePoint (drand48() * 2 * layout->k - layout->k,
                      drand48() * 2 * layout->k - layout->k);
+  graphNode = gn;
+  [graphNode retain];
+  [graphNode setPosition: pos];
   return self;
+}
+
+- (void) dealloc
+{
+  [graphNode release];
+  [super dealloc];
 }
 
 - (NSString *) description
@@ -73,6 +83,10 @@
 - (void) setPosition: (NSPoint) newPosition
 {
   pos = newPosition;
+  //set the position of the corresponding graphnode
+  //since drawings don't have the information about
+  //the particles
+  [graphNode setPosition: pos];
 }
 
 - (Cell *) cell

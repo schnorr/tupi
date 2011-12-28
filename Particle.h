@@ -19,10 +19,12 @@
 #include <Foundation/Foundation.h>
 #include "Cell.h"
 #include "Layout.h"
+#include "GraphNode.h"
 
 @class Cell;
 @class Layout;
 @class ParticleBox;
+@class GraphNode;
 
 @interface Particle : NSObject
 {
@@ -40,10 +42,14 @@
   double attE; // Attraction energy for this node only.
   double repE; // Repulsion energy for this node only.
   double weight; //the particle importance
+
+  //this particle represents a graph node
+  GraphNode *graphNode;
 }
-- (id) initWithName: (NSString *)n
-         WithLayout: (Layout*)pb
-     andParticleBox: (ParticleBox*) b;
+- (id) initForGraphNode: (GraphNode*) gn
+               WithName: (NSString *)n
+             WithLayout: (Layout*)pb
+         andParticleBox: (ParticleBox*) b;
 - (NSString*)name;
 - (double) weight;
 - (BOOL) closeTo: (Particle *) p;
