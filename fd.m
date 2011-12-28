@@ -43,7 +43,12 @@ double gettime ()
 @end
 
 @implementation Fd
-- (NSEnumerator *) nodesEnumerator
+- (NSEnumerator *) graphNodesEnumerator
+{
+  return [graph objectEnumerator];
+}
+
+- (NSEnumerator *) particlesEnumerator
 {
   return [[layout allParticles] objectEnumerator];
 }
@@ -109,7 +114,6 @@ double gettime ()
     n1 = agnxtnode (g, n1);
   }
   agclose(g);
-
 
   //Here
   layout = [[Layout alloc] init];
