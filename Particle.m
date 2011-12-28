@@ -116,7 +116,31 @@
 
 - (void) attraction
 {
+  int connected = [[graphNode connectedNodes] count];
+  if (connected == 0){
+    return;
+  }
+  NSEnumerator *en = [[graphNode connectedNodes] objectEnumerator];
+  GraphNode *node;
 
+  while ((node = [en nextObject])){
+    Particle *p = [node particle];
+    if (p == nil){
+      [[NSException exceptionWithName: [node description]
+                               reason: @"corresponding particle of graph node is not defined"
+                             userInfo: nil] raise];
+    }
+    NSPoint n1p = [self position];
+    NSPoint n2p = [p position];
+    NSPoint normalized = LMSNormalizePoint(NSSubtractPoints (n1p, n2p));
+    double distance = LMSDistanceBetweenPoints (n1p, n2p);
+
+    double factor = (layout->K1 * (distance - layout->k)) * 1/connected;
+    attE += factor;
+    disp = NSAddPoints (disp, LMSMultiplyPoint (normalized, -factor));
+
+    [[layout energy] add: factor];
+  }
   // for (EdgeSpring edge : neighbours) {
   //   if (!edge.ignored) {
   //     NodeParticle other = edge.getOpposite(this);
