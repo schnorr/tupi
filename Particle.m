@@ -161,12 +161,21 @@
   NSRect bb = [c boundingBox];
   NSRect grownPoint = LMSGrowCenterPoint ([self position], k*vz);
   return NSIntersectsRect (bb, grownPoint);
+
+  //we can ignore completely the viewZone and k,
+  //and just check if the particle's position is within
+  //the bounding box of this cell (this gives a very low
+  //quality positioning because it does not consider close
+  //neighbors according to the viewZone)
+  //return NSPointInRect([self position], [c boundingBox]);
 }
 
 - (void) recurseRepulsionWithCell: (Cell*)c
 {
   if ([self intersectionWithCell: c]){
     if ([c isLeaf]){
+      //consider all my cell mates (and the closest cells mates - defined by viewZone and quality)
+
       NSEnumerator *en = [[c particles] objectEnumerator];
       Particle *p;
       while ((p = [en nextObject])){
@@ -188,15 +197,20 @@
           }
         }
       }
+
     }else{
+      //it not leaf, just recurse
+
       NSEnumerator *en = [[c divisions] objectEnumerator];
       Cell *subcell;
       while ((subcell = [en nextObject])){
         [self recurseRepulsionWithCell: subcell];
       }
+
     }
   }else{
     if (cell != c){
+
       BarycenterCellData *bary = (BarycenterCellData*)[c data];
       if (bary == nil){
         [[NSException exceptionWithName: nil
@@ -206,13 +220,10 @@
       double distance = [bary distanceFromPosition: [self position]];
       double size = [[c space] size];
 
-      if (![c isLeaf] && (size / distance) > layout->theta){
-        NSEnumerator *en = [[c divisions] objectEnumerator];
-        Cell *subcell;
-        while ((subcell = [en nextObject])){
-          [self recurseRepulsionWithCell: subcell];
-        }
-      }else{
+      if ((size/distance) < layout->theta){
+        //then include the interaction between this cell and
+        //the particle in the total being accumulated
+
         if ([bary weight] != 0){
           NSPoint n1p = [self position];
           NSPoint n2p = [bary center];
@@ -230,7 +241,21 @@
             [[layout energy] add: factor];
           }
         }
+
+      }else{
+        //otherwise, resolve the current cell into its [eight] four subcells,
+        //and recursively examine each one in turn
+
+        NSEnumerator *en = [[c divisions] objectEnumerator];
+        Cell *subcell;
+        while ((subcell = [en nextObject])){
+          [self recurseRepulsionWithCell: subcell];
+        }
       }
+    }else{
+      [[NSException exceptionWithName: [self description]
+                               reason: @"cell == c, but it shouldn't because this point is not intersecting c"
+                             userInfo: nil] raise];
     }
   }
 }
