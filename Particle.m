@@ -123,6 +123,7 @@
   NSEnumerator *en = [[graphNode connectedNodes] objectEnumerator];
   GraphNode *node;
 
+  NSPoint attractionDisp = NSZeroPoint;
   while ((node = [en nextObject])){
     Particle *p = [node particle];
     if (p == nil){
@@ -136,41 +137,13 @@
     double distance = LMSDistanceBetweenPoints (n1p, n2p);
 
     double factor = (layout->K1 * (distance - layout->k)) * 1/connected;
-    attE += factor;
-    disp = NSAddPoints (disp, LMSMultiplyPoint (normalized, -factor));
 
+    attractionDisp = NSAddPoints (attractionDisp, LMSMultiplyPoint (normalized, -factor));
+
+    attE += factor;
     [[layout energy] add: factor];
   }
-  // for (EdgeSpring edge : neighbours) {
-  //   if (!edge.ignored) {
-  //     NodeParticle other = edge.getOpposite(this);
-
-  //     delta.set(other.pos.x - pos.x, other.pos.y - pos.y,
-  //               box.is3D ? other.pos.z - pos.z : 0);
-
-  //     double len = delta.normalize();
-  //     double k = box.k * edge.weight;
-
-  //     double factor = box.K1 * (len - k);
-
-  //     // delta.scalarMult( factor );
-  //     delta.scalarMult(factor * (1f / (neighbours.size() * 0.1f))); // XXX
-  //     // NEW
-  //     // inertia
-  //     // based
-  //     // on
-  //     // the
-  //     // node
-  //     // degree.
-  //     disp.add(delta);
-  //     attE += factor;
-
-  //     box.energies.accumulateEnergy(factor);
-  //   }
-  // }
-
-
-// [[layout energy] add: factor];
+  disp = NSAddPoints (disp, attractionDisp);
 }
 
 - (void) repulsionN2
