@@ -21,8 +21,8 @@
 @interface Energy : NSObject
 {
   NSMutableArray *energies;
-  double lastEnergy;
   double energy;
+  double accumulator;
   int length;
 }
 - (void) add: (double) e;

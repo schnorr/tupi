@@ -21,8 +21,8 @@
 {
   self = [super init];
   energies = [[NSMutableArray alloc] init];
-  lastEnergy = 0;
   energy = 0;
+  accumulator = 0;
   length = 256;
   return self;
 }
@@ -35,29 +35,29 @@
 
 - (void) add: (double) e
 {
-  energy += e;
+  accumulator += e;
 }
 
 - (void) store
 {
-  [energies addObject: [NSNumber numberWithDouble: energy]];
+  [energies addObject: [NSNumber numberWithDouble: accumulator]];
   if ([energies count] > length){
     [energies removeObjectAtIndex: 0];
-  }       
-  lastEnergy = energy;
-  energy = 0;
+  }
+  energy = accumulator;
+  accumulator = 0;
 }
 
 - (void) clear
 {
   [energies removeAllObjects];
-  lastEnergy = 0;
   energy = 0;
+  accumulator = 0;
 }
 
 - (double) energy
 {
-  return lastEnergy;
+  return energy;
 }
 
 - (double) stabilization
