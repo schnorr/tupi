@@ -133,13 +133,11 @@
     }
     NSPoint n1p = [self position];
     NSPoint n2p = [p position];
-    NSPoint normalized = LMSNormalizePoint(NSSubtractPoints (n1p, n2p));
+    NSPoint dif = NSSubtractPoints (n1p, n2p);
     double distance = LMSDistanceBetweenPoints (n1p, n2p);
-
-    double factor = (layout->K1 * (distance - layout->k)) * 1/connected;
-
-    attractionDisp = NSAddPoints (attractionDisp, LMSMultiplyPoint (normalized, -factor));
-
+    NSPoint normalized = LMSNormalizePoint(dif);
+    double factor = (layout->K1 * (distance - layout->k));
+    attractionDisp = NSAddPoints (attractionDisp, LMSMultiplyPoint(normalized, -factor));
     attE += factor;
     [[layout energy] add: factor];
   }
