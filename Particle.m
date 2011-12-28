@@ -238,7 +238,7 @@
       double distance = [bary distanceFromPosition: [self position]];
       double size = [[c space] size];
 
-      if ((size/distance) < layout->theta){
+      if ([c isLeaf] && (size/distance) < layout->theta){
         //then include the interaction between this cell and
         //the particle in the total being accumulated
 
