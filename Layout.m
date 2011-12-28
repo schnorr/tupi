@@ -49,7 +49,7 @@ double gettime ();
 
   id<CellSpace> space;
   id<CellData> data;
-  space = [[QuadTreeCellSpace alloc] initWithBB: NSMakeRect(-100, -100,200,200)];
+  space = [[QuadTreeCellSpace alloc] initWithBB: NSMakeRect(-10, -10, 20, 20)];
   data = [[BarycenterCellData alloc] init];
   mainBox = [[ParticleBox alloc] initWithNodesPerCell: nodesPerCell
                                             cellSpace: space
