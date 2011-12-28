@@ -161,6 +161,11 @@ double gettime ();
   return [mainBox allParticles];
 }
 
+- (NSRect) boundingBox
+{
+  return [[[mainBox tree] rootCell] boundingBox];
+}
+
 - (Cell *)rootCell
 {
   return [[mainBox tree] rootCell];

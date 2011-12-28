@@ -76,6 +76,7 @@
 }
 - (void) setProvider: (id) prov;
 - (NSArray *)allParticles;
+- (NSRect) boundingBox;
 - (Cell *)rootCell;
 - (Energy*) energy;
 
