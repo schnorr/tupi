@@ -157,13 +157,13 @@
       NSPoint n2p = [p position];
       NSPoint dif = NSSubtractPoints (n1p, n2p);
       double distance = LMSDistanceBetweenPoints (n1p, n2p);
+
       if (distance > 0){
         if (distance < layout->k){
           distance = layout->k;
         }
-        double factor = distance != 0 ? ((layout->K2 / (distance*distance))) * [self weight] : 0.00001;
+        double factor = distance != 0 ? (layout->K2/(distance*distance)) * [p weight] : 0.00001;
         repulsionDisp = NSAddPoints (repulsionDisp, LMSMultiplyPoint (LMSNormalizePoint(dif), factor));
-
         repE += factor;
         [[layout energy] add: factor];
       }
