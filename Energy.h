@@ -30,7 +30,6 @@
 - (void) clear;
 - (double) energy;
 - (double) stabilization;
-- (double) average;
 @end
 
 #endif

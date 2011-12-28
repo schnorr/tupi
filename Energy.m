@@ -62,25 +62,30 @@
 
 - (double) stabilization
 {
-  double average = [self average];
-  double diff = fabs (lastEnergy - average);
+  NSEnumerator *en;
+  NSNumber *number;
 
-  diff = diff < 1 ? 1 : diff;
-  return 1/diff;
-}
-
-- (double) average
-{
-  if ([energies count] == 0){
+  //not enough samples? (minimum of 10, why?)
+  if ([energies count] < 10){
     return 0;
   }
 
-  NSEnumerator *en = [energies objectEnumerator];
-  NSNumber *number;
-  double energySum = 0;
+  //calculate the average
+  double average = 0;
+  en = [energies objectEnumerator];
   while ((number = [en nextObject])){
-    energySum += [number doubleValue];
+    average += [number doubleValue];
   }
-  return energySum/[energies count];
+  average /= [energies count];
+
+  //calculate the standard deviation
+  double standard = 0;
+  en = [energies objectEnumerator];
+  while ((number = [en nextObject])){
+    standard += pow ([number doubleValue] - average, 2);
+  }
+  standard = sqrt (standard/[energies count]);
+
+  return 1/standard;
 }
 @end
