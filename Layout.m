@@ -94,7 +94,8 @@ double gettime ();
   case 1: viewZone = 2 * k; break;
   case 2: viewZone = 5 * k; break;
   case 3: viewZone = 10 * k; break;
-  default: viewZone = k;
+  case 4: viewZone = -1; break; //N2 algorithm
+  default: viewZone = k; break;
   }
 }
 
