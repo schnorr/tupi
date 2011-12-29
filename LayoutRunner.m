@@ -42,7 +42,6 @@
 
 - (void) sleep: (NSTimeInterval) seconds
 {
-  NSLog (@"sleeping for %f seconds", seconds);
   [NSThread sleepForTimeInterval: seconds];
 }
 
@@ -50,24 +49,17 @@
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   double limit = [layout stabilizationLimit];
-  NSLog (@"Stabilization Limit: %f", limit);
-  [layout compute];
-  [layout compute];
   while (![[NSThread currentThread] isCancelled]){
-    if(limit > 0) {
-      NSLog (@"stabilization: %f", [layout stabilization]);
-      if([layout stabilization] > [layout stabilizationLimit]) {
-        [layout compute];
-        [self sleep: 0.8];
-      } else {
-        [layout compute];
-        [self sleep: 0.1];
-      }
-    } else {
+    NSAutoreleasePool *looppool = [[NSAutoreleasePool alloc] init];
+    double current = [layout stabilization];
+    if (current > limit){
+      [self sleep: 0.08];
+    }else{
       [layout compute];
-      [self sleep: 0.1];
+      [provider layoutChanged];
+      [self sleep: 0.01];
     }
-    [provider layoutChanged];
+    [looppool release];
   }
   [pool release];
 }
