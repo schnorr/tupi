@@ -32,7 +32,7 @@ double gettime ();
   K1 = 0.06;
   K2 = 0.024;
   force = 1.0;
-  viewZone = 5.0;
+  //viewZone = 5.0; calculated by the quality level
   theta = 0.7;
   quality = 1;
   nodesPerCell = 10;
@@ -97,6 +97,7 @@ double gettime ();
   case 4: viewZone = -1; break; //N2 algorithm
   default: viewZone = k; break;
   }
+  NSLog (@"quality set to %d, viewZone calculated to %f", quality, viewZone);
 }
 
 - (double) force
@@ -149,6 +150,7 @@ double gettime ();
   // Ready for the next step.
   [energy store];
   lastStepDuration = t2 - t1;
+  NSLog (@"step duration = %f", lastStepDuration);
   time++;
 }
 
