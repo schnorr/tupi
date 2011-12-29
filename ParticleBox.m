@@ -16,6 +16,8 @@
 */
 #include "ParticleBox.h"
 
+extern double gettime();
+
 @implementation ParticleBox
 - (id) init
 {
@@ -52,9 +54,24 @@
 {
   NSEnumerator *en;
   Particle *p;
+  BOOL debug = NO;
+  double tt1, tt2;
+
+  if (debug){
+    tt1 = gettime();
+  }
+
+  //this is the most expensive operation
   en = [particles objectEnumerator];
   while ((p = [en nextObject])){
     [p move: time];
+  }
+
+  if (debug){
+    tt2 = gettime();
+    NSLog (@"\t%s: time elapsed: %f per_particle = %f", "Move",
+           tt2-tt1, (tt2-tt1)/[particles count]);
+    tt1 = gettime();
   }
 
   en = [particles objectEnumerator];
@@ -62,7 +79,18 @@
     [p nextStep: time];
   }
 
+  if (debug){
+    tt2 = gettime();
+    NSLog (@"\t%s: time elapsed: %f per_particle = %f", "nextStep", tt2-tt1, (tt2-tt1)/[particles count]);
+    tt1 = gettime();
+  }
+
   [tree checkDivisions];
+
+  if (debug){
+    tt2 = gettime();
+    NSLog (@"\t%s: time elapsed: %f", "checkDivisions", tt2-tt1);
+  }
 
   time++;
 }
