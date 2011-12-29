@@ -118,16 +118,15 @@ double gettime ()
   //Here
   layout = [[Layout alloc] init];
   [layout setProvider: self];
-  LayoutRunner *fd = [[LayoutRunner alloc] init];
-  [fd setLayout: layout];
-  [fd setProvider: self];
-
   NSEnumerator *en = [graph objectEnumerator];
   GraphNode *n;
   while ((n = [en nextObject])){
     [layout addNode: n withName: [n name]];
   }
 
+  LayoutRunner *fd = [[LayoutRunner alloc] init];
+  [fd setLayout: layout];
+  [fd setProvider: self];
   [[[NSThread alloc] initWithTarget: fd
                            selector: @selector(run:)
                              object: nil] start];
