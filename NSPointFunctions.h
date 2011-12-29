@@ -79,10 +79,21 @@ static inline double LMSDistanceBetweenPoints(NSPoint pt1, NSPoint pt2)
         return sqrt( ptxd*ptxd + ptyd*ptyd );
 }
 
+static inline double LMSLengthPoint (NSPoint p)
+{
+  return sqrt (pow(p.x, 2) +
+               pow(p.y, 2));
+}
+
 static inline NSPoint LMSNormalizePoint (NSPoint p)
 {
-        double a = sqrt (p.x*p.x + p.y*p.y);
-        return NSMakePoint (p.x / a, p.y / a );
+  double len = LMSLengthPoint (p);
+  if (len != 0) {
+    return NSMakePoint (p.x/len,
+                        p.y/len);
+  }else{
+    return NSZeroPoint;
+  }
 }
 
 static inline NSPoint LMSMultiplyPoint (NSPoint p, double val)
