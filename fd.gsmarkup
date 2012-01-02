@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE gsmarkup>
+
+<gsmarkup>
+
+  <objects>
+    <window id="window" autosaveName="ForceDirectedWindow"
+            width="500" height="300"
+            title="Force Directed" 
+            resizable="yes">
+      <vbox halign="expand">    
+        <view id="view"
+              instanceOf="FDView"
+              halign="expand" valign="expand" />
+      </vbox>
+    </window>
+
+    <menu type="main">
+      <menuItem title="Info Panel..." action="orderFrontStandardInfoPanel:" />
+      <menuItem title="Hide" action="hide:" keyEquivalent="h" />
+      <menuItem title="Quit" action="terminate:" keyEquivalent="q" />
+    </menu>
+
+  </objects>
+
+  <connectors>
+    <outlet source="#NSOwner" target="#view" key="view" />
+    <outlet source="#NSOwner" target="#window" key="window" />
+  </connectors>
+</gsmarkup>
+
