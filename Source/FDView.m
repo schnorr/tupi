@@ -41,14 +41,6 @@ extern double gettime();
   NSAffineTransform* transform = [self transform];
   [transform concat];
 
-  NSRect rootCellBB = [provider boundingBox];
-  rootCellBB.origin = LMSMultiplyPoint (rootCellBB.origin, 100);
-  rootCellBB.size.width *= 100;
-  rootCellBB.size.height *= 100;
-  NSBezierPath *bbpath = [NSBezierPath bezierPathWithRect: rootCellBB];
-  [[NSColor greenColor] set];
-  [bbpath stroke];
-
   NSEnumerator *en = [provider graphNodesEnumerator];
   GraphNode *node;
   int i = 0;
@@ -80,19 +72,6 @@ extern double gettime();
       [path lineToPoint: vp0];
       [path stroke];
     }
-  }
-
-  en = [provider particlesEnumerator];
-  Particle *p;
-  while ((p = [en nextObject])){
-    //draw the cell
-    NSRect cellRect = [[[p cell] space] bb];
-    cellRect.origin = LMSMultiplyPoint (cellRect.origin, 100);
-    cellRect.size.width *= 100;
-    cellRect.size.height *= 100;
-    NSBezierPath *p2 = [NSBezierPath bezierPathWithRect: cellRect];
-    [[NSColor yellowColor] set];
-    [p2 stroke];
   }
 
   [transform invert];
