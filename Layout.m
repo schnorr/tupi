@@ -150,7 +150,6 @@ double gettime ();
   // Ready for the next step.
   [energy store];
   lastStepDuration = t2 - t1;
-  NSLog (@"step duration = %f", lastStepDuration);
   time++;
 }
 
