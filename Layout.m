@@ -97,7 +97,6 @@ double gettime ();
   case 4: viewZone = -1; break; //N2 algorithm
   default: viewZone = k; break;
   }
-  NSLog (@"quality set to %d, viewZone calculated to %f", quality, viewZone);
 }
 
 - (double) force

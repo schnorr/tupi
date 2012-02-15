@@ -127,6 +127,5 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
-  NSLog (@"leaving...");
 }
 @end
