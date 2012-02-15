@@ -25,7 +25,18 @@ No secrets here, just do:
     $ git clone git://github.com/schnorr/tupi.git
     $ cd tupi
     $ make
-    $ ./Tupi.app/Tupi
+    $ ./Source/Tupi.app/Tupi
+
+Install
+-------
+
+You can optionally install Tupi:
+
+    $ make install # you'll probably need root privileges for this
+
+or install in your user directory (such as $HOME/GNUstep/...)
+
+    $ make install GNUSTEP_INSTALLATION_DOMAIN=USER
 
 Examples
 --------
@@ -34,7 +45,7 @@ Tupi uses dot files (in the graphviz's dot file format) as
 input. There are some examples in the `examples` directory. If you
 want to give a try, type:
 
-   $ ./Tupi.app/Tupi examples/teste.dot
+   $ ./Source/Tupi.app/Tupi examples/teste.dot
 
 Interactions
 ------------
