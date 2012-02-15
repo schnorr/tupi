@@ -136,7 +136,9 @@ double gettime ()
 
 - (void) applicationDidFinishLaunching: (NSNotification *)not
 {
-  [NSBundle loadGSMarkupNamed: @"fd"  owner: self];
+  if (![NSBundle loadGSMarkupNamed: @"Tupi"  owner: self]){
+    [[NSApplication sharedApplication] terminate:self];
+  }
   [window makeKeyAndOrderFront: self];
   [window setDelegate: self];
   [view setProvider: self];

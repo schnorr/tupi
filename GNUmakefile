@@ -1,9 +1,9 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
-APP_NAME = fd
+APP_NAME = Tupi
 
-fd_OBJC_FILES = \
-	fd.m \
+Tupi_OBJC_FILES = \
+	main.m \
 	GraphNode.m \
 	Particle.m \
 	Cell.m \
@@ -17,7 +17,7 @@ fd_OBJC_FILES = \
 	FDView.m \
 	BasicView.m
 
-fd_RESOURCE_FILES = fd.gsmarkup
+Tupi_RESOURCE_FILES = Tupi.gsmarkup
 
 ifeq ($(FOUNDATION_LIB), apple)
   ADDITIONAL_INCLUDE_DIRS += -framework Renaissance
@@ -26,6 +26,6 @@ else
   ADDITIONAL_GUI_LIBS += -lRenaissance
 endif
 
-fd_LDFLAGS += -lgvc
+Tupi_LDFLAGS += -lgvc
 
 include $(GNUSTEP_MAKEFILES)/application.make
