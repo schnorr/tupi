@@ -58,3 +58,14 @@ window so you can visually play with the graph. You can:
 * click and drag, changing the portion of the graph that you see
 * use the mouse wheel, zooming in and out to see details
 
+Nodes are expected to stop moving after the graph achieves a stable
+placement (defined by the sum of energy of all nodes when they move).
+After that, the only thing you can do (for now) is stop the program.
+
+Roadmap
+-------
+
+* Other kind of interactions, such as moving nodes interactively
+* Export the resulting layout in a vector format (such as SVG)
+* Allow the user to change the several parameters of the placement algorithm
+  to fine-tune the algorithm according to the graph
