@@ -35,8 +35,6 @@ extern double gettime();
 
 - (void) drawRect: (NSRect)frame
 {
-  double t1 = gettime();
-
   [[NSColor whiteColor] set];
   NSRectFill([self bounds]);
 
@@ -99,10 +97,5 @@ extern double gettime();
 
   [transform invert];
   [transform concat];
-
-  double t2 = gettime();
-  // NSLog (@"drawing duration = %f frame = %@",
-  //        t2-t1,
-  //        NSStringFromRect(frame));
 }
 @end
