@@ -28,7 +28,7 @@ extern double gettime();
   return self;
 }
 
-- (void) setProvider: (id) p
+- (void) setProvider: (Tupi *) p
 {
   provider = p;
 }

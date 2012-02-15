@@ -18,12 +18,13 @@
 #define __FDVIEW__H__
 #include <AppKit/AppKit.h>
 #include "BasicView.h"
+#include "Tupi.h"
 
 @interface FDView : BasicView
 {
-  id provider;
+  Tupi *provider;
 }
-- (void) setProvider: (id) p;
+- (void) setProvider: (Tupi *) p;
 @end
 
 #endif

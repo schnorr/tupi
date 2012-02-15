@@ -17,15 +17,17 @@
 #ifndef __LAYOUTRUNNER_H__
 #define __LAYOUTRUNNER_H__
 #include <Foundation/Foundation.h>
-#
+#include "Tupi.h"
 #include "Layout.h"
+
+@class Tupi;
 
 @interface LayoutRunner : NSObject
 {
   Layout *layout;
-  id provider;
+  Tupi *provider;
 }
-- (void) setProvider: (id) prov;
+- (void) setProvider: (Tupi *) prov;
 - (void) setLayout: (Layout*)l;
 @end
 

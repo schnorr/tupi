@@ -31,5 +31,9 @@
   NSMutableDictionary *graph;
   Layout *layout;
 }
+- (NSEnumerator *) graphNodesEnumerator;
+- (NSEnumerator *) particlesEnumerator;
+- (NSRect) boundingBox;
+- (void) layoutChanged;
 @end
 #endif
