@@ -7,7 +7,7 @@ GPLv3 license, and is inspired by the
 [GraphStream-Project](http://graphstream-project.org/), a very
 powerfull library to deal with dynamic graphs. The algorithm with
 complexity __nlogn__ uses the Hooke Attraction's Law when two nodes
-are connected and the Coulomb Repultion's Law that considers all
+are connected and the Coulomb Repulsion's Law that considers all
 nodes.
 
 Dependencies
