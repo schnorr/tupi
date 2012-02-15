@@ -1,12 +1,6 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
-APP_NAME = ForceDirected fd
-ForceDirected_OBJC_FILES = \
-	main.m \
-	BasicView.m \
-	ForceDirectedView.m \
-	FDTree.m \
-	GraphNode.m
+APP_NAME = fd
 
 fd_OBJC_FILES = \
 	fd.m \
@@ -24,7 +18,6 @@ fd_OBJC_FILES = \
 	BasicView.m
 
 fd_RESOURCE_FILES = fd.gsmarkup
-ForceDirected_RESOURCE_FILES = ForceDirected.gsmarkup
 
 ifeq ($(FOUNDATION_LIB), apple)
   ADDITIONAL_INCLUDE_DIRS += -framework Renaissance
@@ -33,7 +26,6 @@ else
   ADDITIONAL_GUI_LIBS += -lRenaissance
 endif
 
-ForceDirected_LDFLAGS += -lgvc
 fd_LDFLAGS += -lgvc
 
 include $(GNUSTEP_MAKEFILES)/application.make
