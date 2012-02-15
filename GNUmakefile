@@ -22,11 +22,9 @@ Tupi_RESOURCE_FILES = Tupi.gsmarkup
 
 ifeq ($(FOUNDATION_LIB), apple)
   ADDITIONAL_INCLUDE_DIRS += -framework Renaissance
-  ADDITIONAL_GUI_LIBS += -framework Renaissance
+  ADDITIONAL_GUI_LIBS += -framework Renaissance -lgvc -lgraph
 else
-  ADDITIONAL_GUI_LIBS += -lRenaissance
+  ADDITIONAL_GUI_LIBS += -lRenaissance -lgvc -lgraph
 endif
-
-Tupi_LDFLAGS += -lgvc
 
 include $(GNUSTEP_MAKEFILES)/application.make
