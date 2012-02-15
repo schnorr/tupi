@@ -42,10 +42,10 @@ Examples
 --------
 
 Tupi uses dot files (in the graphviz's dot file format) as
-input. There are some examples in the `examples` directory. If you
+input. There are some examples in the `Examples` directory. If you
 want to give a try, type:
 
-   $ ./Source/Tupi.app/Tupi examples/teste.dot
+   $ ./Source/Tupi.app/Tupi Examples/teste.dot
 
 Interactions
 ------------
