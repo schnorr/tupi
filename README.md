@@ -13,9 +13,11 @@ nodes.
 Dependencies
 ------------
 
-Tupi needs a recent GNUstep environment (gnustep-make, gnustep-base,
-gnustep-gui), better if compiled with clang, and the graphviz library
-(used for parsing dot files).
+Tupi needs a recent [GNUstep environment](http://gnustep.org)
+(gnustep-make, gnustep-base, gnustep-gui), better if compiled with
+[clang](http://clang.llvm.org/), [GNUstep
+Renaissance](http://www.gnustep.it/Renaissance/), and the [Graphviz
+library](http://www.graphviz.org/) (used for parsing dot files).
 
 Clone and Compilation
 ---------------------
