@@ -69,3 +69,4 @@ Roadmap
 * Export the resulting layout in a vector format (such as SVG)
 * Allow the user to change the several parameters of the placement algorithm
   to fine-tune the algorithm according to the graph
+* Increase the scalability of the algorithm implementation
