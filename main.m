@@ -96,7 +96,8 @@ double gettime ()
       [node1 release];
     }
 
-    for (Agnode_t *n2 = agfstnode (g); n2; n2 = agnxtnode (g, n2)){
+    Agnode_t *n2;
+    for (n2 = agfstnode (g); n2; n2 = agnxtnode (g, n2)){
       if (agfindedge (g, n1, n2)){
         //n1 and n2 are connected
         NSString *name2 = [NSString stringWithFormat: @"%s", n2->name];

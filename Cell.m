@@ -92,12 +92,12 @@
   return [space bb];
 }
 
-- (id<CellSpace>) space
+- (QuadTreeCellSpace*) space
 {
   return space;
 }
 
-- (id<CellData>) data
+- (BarycenterCellData*) data
 {
   return data;
 }
@@ -268,7 +268,8 @@
 
   int divisions = [space getDivisions];
   NSMutableArray *subdiv = [[NSMutableArray alloc] initWithCapacity: divisions];
-  for (int i = 0; i < divisions; i++){
+  int i;
+  for (i = 0; i < divisions; i++){
     Cell *subcell = [[Cell alloc] initChildCell: i
                                       WithSpace: [space newSubCellSpace: i]
                                        cellData: [data newCellData]
