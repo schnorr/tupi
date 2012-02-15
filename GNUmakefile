@@ -15,7 +15,8 @@ Tupi_OBJC_FILES = \
 	BarycenterCellData.m \
 	Energy.m \
 	FDView.m \
-	BasicView.m
+	BasicView.m \
+	Tupi.m
 
 Tupi_RESOURCE_FILES = Tupi.gsmarkup
 
