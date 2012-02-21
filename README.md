@@ -27,7 +27,8 @@ No secrets here, just do:
     $ git clone git://github.com/schnorr/tupi.git
     $ cd tupi
     $ make
-    $ ./Source/Tupi.app/Tupi
+    $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/Source/Tupi.framework/Versions/Current
+    $ ./Source/tupi.app/tupi
 
 Install
 -------
@@ -47,7 +48,7 @@ Tupi uses dot files (in the graphviz's dot file format) as
 input. There are some examples in the `Examples` directory. If you
 want to give a try, type:
 
-   $ ./Source/Tupi.app/Tupi Examples/teste.dot
+   $ ./Source/tupi.app/tupi Examples/teste.dot
 
 Interactions
 ------------

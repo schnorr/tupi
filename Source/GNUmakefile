@@ -1,10 +1,13 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 
-APP_NAME = Tupi
+FRAMEWORK_NAME = Tupi
+APP_NAME = tupi
+
+tupi_OBJC_FILES = \
+	GraphNode.m \
+	main.m \
 
 Tupi_OBJC_FILES = \
-	main.m \
-	GraphNode.m \
 	Particle.m \
 	Cell.m \
 	ParticleBox.m \
@@ -18,13 +21,29 @@ Tupi_OBJC_FILES = \
 	BasicView.m \
 	Tupi.m
 
+Tupi_HEADER_FILES = \
+	Particle.h \
+	Cell.h \
+	ParticleBox.h \
+	Layout.h \
+	LayoutRunner.h \
+	NTree.h \
+	QuadTreeCellSpace.h \
+	BarycenterCellData.h \
+	Energy.h \
+	FDView.h \
+	BasicView.h \
+	Tupi.h
+
 Tupi_RESOURCE_FILES = Tupi.gsmarkup
 
+LDFLAGS=-L./Tupi.framework/Versions/Current/ 
 ifeq ($(FOUNDATION_LIB), apple)
   ADDITIONAL_INCLUDE_DIRS += -framework Renaissance
-  ADDITIONAL_GUI_LIBS += -framework Renaissance -lgvc -lgraph
+  ADDITIONAL_GUI_LIBS += -framework Renaissance -framework Tupi -lgvc -lgraph
 else
-  ADDITIONAL_GUI_LIBS += -lRenaissance -lgvc -lgraph
+  ADDITIONAL_GUI_LIBS += -lRenaissance -lTupi -lgvc -lgraph
 endif
 
+include $(GNUSTEP_MAKEFILES)/framework.make
 include $(GNUSTEP_MAKEFILES)/application.make
