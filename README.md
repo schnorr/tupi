@@ -48,7 +48,7 @@ Tupi uses dot files (in the graphviz's dot file format) as
 input. There are some examples in the `Examples` directory. If you
 want to give a try, type:
 
-   $ ./Source/tupi.app/tupi Examples/teste.dot
+    $ ./Source/tupi.app/tupi Examples/teste.dot
 
 Interactions
 ------------
