@@ -18,11 +18,13 @@
 #define __FDNODE_H__
 
 @protocol FDNode <NSObject>
+@required
 - (NSPoint) position;
 - (void) setPosition: (NSPoint) newPosition;
 - (NSSet *) connectedNodes;
-- (void) addConnectedNode: (id<FDNode>) n;
 - (BOOL) isConnectedTo: (id<FDNode>) n;
+@optional
+- (void) addConnectedNode: (id<FDNode>) n;
 - (void) setName: (NSString*) newName;
 - (NSString *) name;
 //- (void) setParticle: (Particle*)p;
