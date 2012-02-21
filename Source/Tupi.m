@@ -93,7 +93,6 @@
 
   //Here
   layout = [[Layout alloc] init];
-  [layout setProvider: self];
   NSEnumerator *en = [graph objectEnumerator];
   GraphNode *n;
   while ((n = [en nextObject])){

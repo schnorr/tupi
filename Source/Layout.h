@@ -47,8 +47,6 @@
 
 @interface Layout : NSObject <LayoutProtocol> 
 {
-  id provider;
-
   ParticleBox *mainBox;
   Energy *energy;
 
@@ -75,7 +73,6 @@
   //settings
   double stabilizationLimit; // stabilisation limit of this algorithm.
 }
-- (void) setProvider: (id) prov;
 - (NSArray *)allParticles;
 - (NSRect) boundingBox;
 - (Cell *)rootCell;
@@ -83,7 +80,6 @@
 
 // Graph representation
 - (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName;
-
 @end
 
 #endif

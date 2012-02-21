@@ -29,7 +29,7 @@
   [super dealloc];
 }
 
-- (void) setProvider: (Tupi *) prov
+- (void) setProvider: (id<TupiProvider>) prov
 {
   provider = prov;
 }

@@ -14,26 +14,12 @@
     You should have received a copy of the GNU General Public License
     along with Tupi.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef __TUPI_H_
-#define __TUPI_H_
-#include <Foundation/Foundation.h>
-#include <AppKit/AppKit.h>
-#include <Renaissance/Renaissance.h>
-#include <graphviz/types.h>
-#include <graphviz/graph.h>
-#include "Layout.h"
-#include "LayoutRunner.h"
-#include "TupiProtocols.h"
+#ifndef __TUPIPROTOCOLS_H__
+#define __TUPIPROTOCOLS_H__
+#include "FDNode.h"
 
-@interface Tupi : NSObject <TupiProvider>
-{
-  id window;
-  id view;
-  NSMutableDictionary *graph;
-  Layout *layout;
-}
-- (NSEnumerator *) graphNodesEnumerator;
-- (NSEnumerator *) particlesEnumerator;
-- (NSRect) boundingBox;
+@protocol TupiProvider <NSObject>
+- (void) layoutChanged;
 @end
+
 #endif

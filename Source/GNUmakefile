@@ -5,7 +5,10 @@ APP_NAME = tupi
 
 tupi_OBJC_FILES = \
 	GraphNode.m \
-	main.m \
+	Tupi.m \
+	FDView.m \
+	main.m
+tupi_RESOURCE_FILES = Tupi.gsmarkup
 
 Tupi_OBJC_FILES = \
 	Particle.m \
@@ -17,9 +20,7 @@ Tupi_OBJC_FILES = \
 	QuadTreeCellSpace.m \
 	BarycenterCellData.m \
 	Energy.m \
-	FDView.m \
-	BasicView.m \
-	Tupi.m
+	BasicView.m
 
 Tupi_HEADER_FILES = \
 	Particle.h \
@@ -31,14 +32,11 @@ Tupi_HEADER_FILES = \
 	QuadTreeCellSpace.h \
 	BarycenterCellData.h \
 	Energy.h \
-	FDView.h \
 	BasicView.h \
-	Tupi.h \
 	CellSpace.h \
 	CellData.h \
-	FDNode.h
-
-Tupi_RESOURCE_FILES = Tupi.gsmarkup
+	FDNode.h \
+	TupiProtocols.h
 
 LDFLAGS=-L./Tupi.framework/Versions/Current/ 
 ifeq ($(FOUNDATION_LIB), apple)

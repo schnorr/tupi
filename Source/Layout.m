@@ -152,11 +152,6 @@ double gettime ();
   time++;
 }
 
-- (void) setProvider: (id) prov
-{
-  provider = prov;
-}
-
 - (NSArray *)allParticles
 {
   return [mainBox allParticles];
