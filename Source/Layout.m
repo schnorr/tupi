@@ -154,14 +154,21 @@ double gettime ();
 
 - (void) freezeNode: (id<FDNode>) node frozen: (BOOL) fr
 {
+  Particle *p = [node particle];
+  [p setFreeze: fr];
 }
 
 - (void) removeNode: (id<FDNode>) node
 {
+  Particle *p = [node particle];
+  [mainBox removeParticle: p];
+  [p release];
 }
 
 - (void) moveNode: (id<FDNode>) node toLocation: (NSPoint) newLocation
 {
+  Particle *p = [node particle];
+  [p setPosition: newLocation];
 }
 
 - (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName
@@ -171,6 +178,7 @@ double gettime ();
                                         WithLayout: self
                                     andParticleBox: mainBox];
   [mainBox addParticle: p];
+  [node setParticle: p];
   [p release];
 }
 
