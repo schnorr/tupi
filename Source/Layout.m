@@ -109,26 +109,6 @@ double gettime ();
   force = f;
 }
 
-- (void) moveNode: (NSString*) id toLocation: (NSPoint) newLocation
-{
-
-}
-
-
-- (void) freezeNode: (NSString*) id to: (BOOL) frozen
-{
-
-}
-
-- (void) shake
-{
-}
-
-
-- (void) clear
-{
-}
-
 - (void) compute
 {
   area = [mainBox boundingBox];
@@ -172,6 +152,18 @@ double gettime ();
   return energy;
 }
 
+- (void) freezeNode: (id<FDNode>) node frozen: (BOOL) fr
+{
+}
+
+- (void) removeNode: (id<FDNode>) node
+{
+}
+
+- (void) moveNode: (id<FDNode>) node toLocation: (NSPoint) newLocation
+{
+}
+
 - (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName
 {
   Particle *p = [[Particle alloc] initForGraphNode: node
@@ -180,6 +172,14 @@ double gettime ();
                                     andParticleBox: mainBox];
   [mainBox addParticle: p];
   [p release];
-
 }
+
+- (void) shake
+{
+}
+
+- (void) clear
+{
+}
+
 @end

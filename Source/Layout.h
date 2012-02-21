@@ -34,8 +34,10 @@
 - (double) force;
 - (void) setForce: (double) f; //[0..1]
 
-- (void) moveNode: (NSString*) id toLocation: (NSPoint) newLocation;
-- (void) freezeNode: (NSString*) id to: (BOOL) frozen;
+- (void) freezeNode: (id<FDNode>) node frozen: (BOOL) fr;
+- (void) removeNode: (id<FDNode>) node;
+- (void) moveNode: (id<FDNode>) node toLocation: (NSPoint) newLocation;
+- (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName;
 
 - (void) shake;
 - (void) clear;
@@ -77,9 +79,6 @@
 - (NSRect) boundingBox;
 - (Cell *)rootCell;
 - (Energy*) energy;
-
-// Graph representation
-- (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName;
 @end
 
 #endif
