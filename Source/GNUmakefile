@@ -33,7 +33,10 @@ Tupi_HEADER_FILES = \
 	Energy.h \
 	FDView.h \
 	BasicView.h \
-	Tupi.h
+	Tupi.h \
+	CellSpace.h \
+	CellData.h \
+	FDNode.h
 
 Tupi_RESOURCE_FILES = Tupi.gsmarkup
 
