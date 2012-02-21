@@ -15,7 +15,7 @@
     along with Tupi.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "Tupi.h"
-
+#include "GraphNode.h"
 
 @implementation Tupi
 - (NSEnumerator *) graphNodesEnumerator

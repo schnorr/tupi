@@ -18,7 +18,7 @@
 #include "NSPointFunctions.h"
 
 @implementation Particle
-- (id) initForGraphNode: (GraphNode*) gn
+- (id) initForGraphNode: (id<FDNode>) gn
                WithName: (NSString *)n
              WithLayout: (Layout*)pb
          andParticleBox: (ParticleBox*) b
@@ -121,18 +121,18 @@
     return;
   }
   NSEnumerator *en = [[graphNode connectedNodes] objectEnumerator];
-  GraphNode *node;
+  id<FDNode> node;
 
   NSPoint attractionDisp = NSZeroPoint;
   while ((node = [en nextObject])){
-    Particle *p = [node particle];
-    if (p == nil){
-      [[NSException exceptionWithName: [node description]
-                               reason: @"corresponding particle of graph node is not defined"
-                             userInfo: nil] raise];
-    }
+    // Particle *p = [node particle];
+    // if (p == nil){
+    //   [[NSException exceptionWithName: [node description]
+    //                            reason: @"corresponding particle of graph node is not defined"
+    //                          userInfo: nil] raise];
+    // }
     NSPoint n1p = [self position];
-    NSPoint n2p = [p position];
+    NSPoint n2p = [node position];
     NSPoint dif = NSSubtractPoints (n1p, n2p);
     double distance = LMSDistanceBetweenPoints (n1p, n2p);
     NSPoint normalized = LMSNormalizePoint(dif);

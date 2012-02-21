@@ -22,9 +22,7 @@
 #include "QuadTreeCellSpace.h"
 #include "BarycenterCellData.h"
 #include "Energy.h"
-#include "GraphNode.h"
-
-@class GraphNode;
+#include "FDNode.h"
 
 @protocol LayoutProtocol 
 - (long) numberOfMovedNodes;
@@ -84,7 +82,7 @@
 - (Energy*) energy;
 
 // Graph representation
-- (void) addNode: (GraphNode*) node withName: (NSString *) nodeName;
+- (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName;
 
 @end
 

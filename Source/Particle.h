@@ -19,12 +19,11 @@
 #include <Foundation/Foundation.h>
 #include "Cell.h"
 #include "Layout.h"
-#include "GraphNode.h"
+#include "FDNode.h"
 
 @class Cell;
 @class Layout;
 @class ParticleBox;
-@class GraphNode;
 
 @interface Particle : NSObject
 {
@@ -44,9 +43,9 @@
   double weight; //the particle importance
 
   //this particle represents a graph node
-  GraphNode *graphNode;
+  id<FDNode> graphNode;
 }
-- (id) initForGraphNode: (GraphNode*) gn
+- (id) initForGraphNode: (id<FDNode>) gn
                WithName: (NSString *)n
              WithLayout: (Layout*)pb
          andParticleBox: (ParticleBox*) b;
