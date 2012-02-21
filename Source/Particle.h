@@ -61,6 +61,8 @@
 - (void) suicide;
 - (void) inserted;
 - (void) removed;
+- (void) setFreeze: (BOOL) fr;
+- (BOOL) freeze;
 
 // Force-directed operations
 - (void) move: (long) time;

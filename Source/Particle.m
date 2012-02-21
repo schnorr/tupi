@@ -281,6 +281,16 @@
   [self recurseRepulsionWithCell: [layout rootCell]];
 }
 
+- (void) setFreeze: (BOOL) fr
+{
+  frozen = fr;
+}
+
+- (BOOL) freeze
+{
+  return frozen;
+}
+
 - (void) move: (long) time
 {
   if (!frozen) {
