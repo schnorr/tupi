@@ -36,7 +36,8 @@ Tupi_HEADER_FILES = \
 	CellSpace.h \
 	CellData.h \
 	FDNode.h \
-	TupiProtocols.h
+	TupiProtocols.h \
+	Tupi.h
 
 LDFLAGS=-L./Tupi.framework/Versions/Current/ 
 ifeq ($(FOUNDATION_LIB), apple)
