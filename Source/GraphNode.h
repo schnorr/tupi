@@ -24,11 +24,17 @@
 
 @interface GraphNode : NSObject <FDNode>
 {
+  BOOL high;
+  NSRect bb;
   NSPoint pos;
   NSMutableSet *connected;
   NSString *name;
   Particle *particle; //the corresponding particle in the repulsion/att system
 }
+- (void) setHighlighted: (BOOL) h;
+- (BOOL) highlighted;
+- (NSRect) boundingBox;
+- (void) setBoundingBox: (NSRect) r;
 - (void) setParticle: (Particle*)p;
 - (Particle*) particle;
 @end

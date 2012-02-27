@@ -24,6 +24,7 @@
   connected = [[NSMutableSet alloc] init];
   name = nil;
   particle = nil;
+  high = NO;
   return self;
 }
 
@@ -75,6 +76,26 @@
 - (NSString *) name
 {
   return name;
+}
+
+- (void) setHighlighted: (BOOL) h
+{
+  high = h;
+}
+
+- (BOOL) highlighted
+{
+  return high;
+}
+
+- (NSRect) boundingBox
+{
+  return bb;
+}
+
+- (void) setBoundingBox: (NSRect) r
+{
+  bb = r;
 }
 
 - (void) setParticle: (Particle*)p
