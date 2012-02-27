@@ -25,12 +25,19 @@ extern double gettime();
 - (id) initWithFrame: (NSRect) frame
 {
   self = [super initWithFrame: frame];
+  provider = nil;
+  highlighted = nil;
   return self;
 }
 
 - (void) setProvider: (Tupi *) p
 {
   provider = p;
+}
+
+- (void) setLayout: (Layout *) l
+{
+  layout = l;
 }
 
 - (void) drawRect: (NSRect)frame
@@ -41,40 +48,127 @@ extern double gettime();
   NSAffineTransform* transform = [self transform];
   [transform concat];
 
+
+  [[NSColor blackColor] set];
+  [[NSBezierPath bezierPathWithRect: NSMakeRect(-10, -10, 20, 20)] fill];
+
+
+  NSRect rootCellBB = [provider boundingBox];
+  rootCellBB.origin = LMSMultiplyPoint (rootCellBB.origin, 100);
+  rootCellBB.size.width *= 100;
+  rootCellBB.size.height *= 100;
+  NSBezierPath *bbpath = [NSBezierPath bezierPathWithRect: rootCellBB];
+  [[NSColor greenColor] set];
+  [bbpath stroke];
+
+
   NSEnumerator *en = [provider graphNodesEnumerator];
   GraphNode *node;
-  int i = 0;
-
   while ((node = [en nextObject])){
     NSPoint pos = [node position];
-    NSPoint vpos = NSMakePoint (pos.x*100, pos.y*100);
-    NSRect r = NSMakeRect (vpos.x, vpos.y, 10,10);
-    NSBezierPath *p = [NSBezierPath bezierPathWithRect: r];
-    i = (i+1)%2;
-    if (i == 0){
-      [[NSColor blueColor] set];
-    }else{
-      [[NSColor redColor] set];  
-    }
 
-    [p fill];
-    [[node name] drawAtPoint:vpos 
+
+    NSPoint poss = NSMakePoint (pos.x*100, pos.y*100);
+    NSRect bb = NSMakeRect (poss.x - 5, poss.y - 5, 20, 20);
+    [node setBoundingBox: bb];
+    if ([node highlighted]){
+      [[NSColor redColor] set];
+    }else{
+      [[NSColor blueColor] set];
+    }
+    [[NSBezierPath bezierPathWithRect: bb] fill];
+    [[node name] drawAtPoint:NSMakePoint(poss.x+15, poss.y+15)
               withAttributes:nil];
 
-    //draw connections
+    // draw connections
     NSEnumerator *en0 = [[node connectedNodes] objectEnumerator];
     GraphNode *gn0;
     while ((gn0 = [en0 nextObject])){
       NSPoint p0 = [gn0 position];
-      NSPoint vp0 = NSMakePoint (p0.x*100, p0.y*100);
+      NSPoint p0s = NSMakePoint (p0.x*100, p0.y*100);
       NSBezierPath *path = [NSBezierPath bezierPath];
-      [path moveToPoint: vpos];
-      [path lineToPoint: vp0];
+      [path moveToPoint: poss];
+      [path lineToPoint: p0s];
       [path stroke];
     }
   }
 
+
+
+  en = [provider particlesEnumerator];
+  Particle *p;
+  while ((p = [en nextObject])){
+    //draw the cell
+    NSRect cellRect = [[[p cell] space] bb];
+    cellRect.origin = LMSMultiplyPoint (cellRect.origin, 100);
+    cellRect.size.width *= 100;
+    cellRect.size.height *= 100;
+    NSBezierPath *p2 = [NSBezierPath bezierPathWithRect: cellRect];
+    [[NSColor yellowColor] set];
+    [p2 stroke];
+  }
+
+
   [transform invert];
   [transform concat];
+}
+
+- (void) mouseMoved:(NSEvent *)event
+{
+  NSPoint mouse = [self convertPoint:[event locationInWindow] fromView:nil];
+  NSAffineTransform *t = [self transform];
+  [t invert];
+  mouse = [t transformPoint: mouse];
+  NSEnumerator *en = [provider graphNodesEnumerator];
+  GraphNode *node;
+  if (highlighted){
+    [highlighted setHighlighted: NO];
+    [layout freezeNode: highlighted frozen: NO];
+    highlighted = nil;
+  }
+  while ((node = [en nextObject])){
+    if (NSPointInRect (mouse, [node boundingBox])){
+      highlighted = node;
+      [highlighted setHighlighted: YES];
+      [layout freezeNode: highlighted frozen: YES];
+      break;
+    }
+  }
+  [self setNeedsDisplay: YES];
+}
+
+- (void) mouseDown: (NSEvent *) event
+{
+  if (highlighted == nil){
+    [super mouseDown: event];
+  }
+}
+
+- (void) mouseDragged:(NSEvent *)event
+{
+  if (highlighted == nil){
+    [super mouseDragged: event];
+  }else{
+    //move the node
+    NSPoint mouse = [self convertPoint:[event locationInWindow] fromView:nil];
+    NSAffineTransform *t = [self transform];
+    [t invert];
+    mouse = [t transformPoint: mouse];
+    mouse.x /= 100;
+    mouse.y /= 100;
+    [layout moveNode: highlighted toLocation: mouse];
+    [self setNeedsDisplay: YES];
+  }
+}
+
+- (void) mouseUp:(NSEvent *)event
+{
+  if (highlighted){
+    [highlighted setHighlighted: NO];
+    [layout freezeNode: highlighted frozen: NO];
+    highlighted = nil;
+    [self setNeedsDisplay: YES];
+  }
+  [super mouseUp: event];
 }
 @end

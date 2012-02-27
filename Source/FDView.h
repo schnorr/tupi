@@ -19,12 +19,17 @@
 #include <AppKit/AppKit.h>
 #include "BasicView.h"
 #include "Tupi.h"
+#include "GraphNode.h"
+#include "Layout.h"
 
 @interface FDView : BasicView
 {
   Tupi *provider;
+  Layout *layout;
+  GraphNode *highlighted;
 }
 - (void) setProvider: (Tupi *) p;
+- (void) setLayout: (Layout *) l;
 @end
 
 #endif
