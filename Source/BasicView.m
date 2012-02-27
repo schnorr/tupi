@@ -56,19 +56,6 @@
   return;
 }
 
-- (void) mouseMoved:(NSEvent *)event
-{
-  NSPoint p;
-  p = [self convertPoint:[event locationInWindow] fromView:nil];
-
-  NSAffineTransform *t = [self transform];
-  [t invert];
-  lastMousePosition = [t transformPoint: p];
-
-  [self setNeedsDisplay: YES];
-}
-
-
 - (void) mouseDragged:(NSEvent *)event
 {
   NSPoint p;
