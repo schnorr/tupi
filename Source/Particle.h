@@ -63,6 +63,7 @@
 - (void) removed;
 - (void) setFreeze: (BOOL) fr;
 - (BOOL) freeze;
+- (void) shake;
 
 // Force-directed operations
 - (void) move: (long) time;

@@ -291,6 +291,12 @@
   return frozen;
 }
 
+- (void) shake
+{
+  pos.x += drand48() * layout->k * 2 - 1;
+  pos.y += drand48() * layout->k * 2 - 1;
+}
+
 - (void) move: (long) time
 {
   if (!frozen) {

@@ -184,6 +184,7 @@ double gettime ();
 
 - (void) shake
 {
+  [mainBox shake];
 }
 
 - (void) clear

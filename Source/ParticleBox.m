@@ -156,4 +156,13 @@ extern double gettime();
 {
   return tree;
 }
+
+- (void) shake
+{
+  NSEnumerator *en = [particles objectEnumerator];
+  Particle *p;
+  while ((p = [en nextObject])){
+    [p shake];
+  }
+}
 @end

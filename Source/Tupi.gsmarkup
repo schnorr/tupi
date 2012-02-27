@@ -17,6 +17,7 @@
 
     <menu type="main">
       <menuItem title="Info Panel..." action="orderFrontStandardInfoPanel:" />
+      <menuItem title="Shake" action="shake:" keyEquivalent="s" />
       <menuItem title="Hide" action="hide:" keyEquivalent="h" />
       <menuItem title="Quit" action="terminate:" keyEquivalent="q" />
     </menu>

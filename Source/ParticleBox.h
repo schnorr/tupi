@@ -43,6 +43,8 @@
 - (void) addParticle: (Particle *)p;
 - (void) removeParticle: (Particle *)p;
 - (NTree*) tree;
+
+- (void) shake;
 @end
 
 #endif

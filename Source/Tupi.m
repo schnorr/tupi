@@ -127,4 +127,9 @@
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
 }
+
+- (void) shake: (id) sender
+{
+  [layout shake];
+}
 @end
