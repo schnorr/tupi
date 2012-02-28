@@ -27,9 +27,10 @@
 - (id) particle;
 @optional
 - (void) addConnectedNode: (id<FDNode>) n;
+- (void) removeConnectedNode: (id<FDNode>) n;
+- (void) removeFromAllConnectedNodes;
 - (void) setName: (NSString*) newName;
 - (NSString *) name;
-
 @end
 
 #endif
