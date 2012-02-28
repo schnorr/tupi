@@ -31,6 +31,8 @@
   id view;
   NSMutableDictionary *graph;
   Layout *layout;
+  LayoutRunner *layoutRunner;
+  NSThread *thread;
 }
 - (NSEnumerator *) graphNodesEnumerator;
 - (NSEnumerator *) particlesEnumerator;

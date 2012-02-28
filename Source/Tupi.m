@@ -99,12 +99,13 @@
     [layout addNode: n withName: [n name]];
   }
 
-  LayoutRunner *fd = [[LayoutRunner alloc] init];
-  [fd setLayout: layout];
-  [fd setProvider: self];
-  [[[NSThread alloc] initWithTarget: fd
-                           selector: @selector(run:)
-                             object: nil] start];
+  layoutRunner = [[LayoutRunner alloc] init];
+  [layoutRunner setLayout: layout];
+  [layoutRunner setProvider: self];
+  thread = [[NSThread alloc] initWithTarget: layoutRunner
+                                   selector: @selector(run:)
+                                     object: nil];
+  [thread start];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)not
