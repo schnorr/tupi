@@ -137,6 +137,15 @@ extern double gettime();
   [self setNeedsDisplay: YES];
 }
 
+- (void) rightMouseDown: (NSEvent *) event
+{
+  if (highlighted){
+    [highlighted setHighlighted: NO];
+    [provider removeNode: highlighted];
+    highlighted = nil;
+  }
+}
+
 - (void) mouseDown: (NSEvent *) event
 {
   if (highlighted == nil){
