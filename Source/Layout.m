@@ -162,7 +162,6 @@ double gettime ();
 {
   Particle *p = [node particle];
   [mainBox removeParticle: p];
-  [p release];
 }
 
 - (void) moveNode: (id<FDNode>) node toLocation: (NSPoint) newLocation

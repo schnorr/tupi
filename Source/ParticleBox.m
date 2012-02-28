@@ -146,9 +146,11 @@ extern double gettime();
                            userInfo: nil] raise]; 
   }
   if (pRemoved != nil){
-    [pRemoved removed];
     [tree removeParticle: pRemoved];
     [pRemoved setParticleBox: nil];
+    [pRemoved setCell: nil];
+    [particles removeObjectForKey: [p description]];
+    [pRemoved removed];
   }
 }
 

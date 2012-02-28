@@ -132,4 +132,16 @@
 {
   [layout shake];
 }
+
+- (void) removeNode: (GraphNode *) g
+{
+  //disconnect the node from all connected nodes
+  [g removeFromAllConnectedNodes];
+
+  //remove the corresponding particle from the layout
+  [layout removeNode: g];
+
+  //final removal from node dictionary
+  [graph removeObjectForKey: [g name]];
+}
 @end

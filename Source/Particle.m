@@ -360,5 +360,7 @@
 
 - (void) removed
 {
+  [graphNode release];
+  graphNode = nil;
 }
 @end
