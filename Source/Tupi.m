@@ -116,6 +116,7 @@
   [window makeKeyAndOrderFront: self];
   [window setDelegate: self];
   [view setProvider: self];
+  [view setLayout: layout];
   [view setNeedsDisplay: YES];
 }
 
