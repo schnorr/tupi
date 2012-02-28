@@ -133,7 +133,7 @@
   [layout shake];
 }
 
-- (void) removeNode: (GraphNode *) g
+- (void) removeNode: (id<FDNode>) g
 {
   //disconnect the node from all connected nodes
   [g removeFromAllConnectedNodes];

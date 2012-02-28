@@ -35,5 +35,6 @@
 - (NSEnumerator *) graphNodesEnumerator;
 - (NSEnumerator *) particlesEnumerator;
 - (NSRect) boundingBox;
+- (void) removeNode: (id<FDNode>) g;
 @end
 #endif
