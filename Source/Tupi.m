@@ -144,4 +144,27 @@
   //final removal from node dictionary
   [graph removeObjectForKey: [g name]];
 }
+
+- (void) startMovingNode: (id<FDNode>) node
+{
+  [layout freezeNode: node frozen: YES];
+}
+
+- (void) moveNode: (id<FDNode>) node toLocation: (NSPoint) newLocation
+{
+  //remove the corresponding particle from the layout
+  [layout removeNode: node];
+
+  //add the particle again, forcing it to the new location
+  [layout addNode: node
+         withName: [node name]
+     withLocation: newLocation];
+  [layout freezeNode: node frozen: YES];
+  return;
+}
+
+- (void) stopMovingNode: (id<FDNode>) node
+{
+  [layout freezeNode: node frozen: NO];
+}
 @end

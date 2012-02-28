@@ -35,6 +35,9 @@
 - (NSEnumerator *) graphNodesEnumerator;
 - (NSEnumerator *) particlesEnumerator;
 - (NSRect) boundingBox;
-- (void) removeNode: (id<FDNode>) g;
+- (void) removeNode: (id<FDNode>) node;
+- (void) startMovingNode: (id<FDNode>) node;
+- (void) moveNode: (id<FDNode>) node toLocation: (NSPoint) newLocation;
+- (void) stopMovingNode: (id<FDNode>) node;
 @end
 #endif

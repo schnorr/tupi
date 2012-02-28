@@ -150,6 +150,8 @@ extern double gettime();
 {
   if (highlighted == nil){
     [super mouseDown: event];
+  }else{
+    [provider startMovingNode: highlighted];
   }
 }
 
@@ -165,7 +167,7 @@ extern double gettime();
     mouse = [t transformPoint: mouse];
     mouse.x /= 100;
     mouse.y /= 100;
-    [layout moveNode: highlighted toLocation: mouse];
+    [provider moveNode: highlighted toLocation: mouse];
     [self setNeedsDisplay: YES];
   }
 }
@@ -174,7 +176,7 @@ extern double gettime();
 {
   if (highlighted){
     [highlighted setHighlighted: NO];
-    [layout freezeNode: highlighted frozen: NO];
+    [provider stopMovingNode: highlighted];
     highlighted = nil;
     [self setNeedsDisplay: YES];
   }
