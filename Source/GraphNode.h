@@ -18,7 +18,7 @@
 #define __GRAPHNODE_H__
 #include <Foundation/Foundation.h>
 #include "Particle.h"
-#include "FDNode.h"
+#include "TupiProtocols.h"
 
 @class Particle;
 

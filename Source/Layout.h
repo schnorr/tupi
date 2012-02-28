@@ -22,7 +22,7 @@
 #include "QuadTreeCellSpace.h"
 #include "BarycenterCellData.h"
 #include "Energy.h"
-#include "FDNode.h"
+#include "TupiProtocols.h"
 
 @protocol LayoutProtocol 
 - (long) numberOfMovedNodes;

@@ -19,7 +19,7 @@
 #include <Foundation/Foundation.h>
 #include "Cell.h"
 #include "Layout.h"
-#include "FDNode.h"
+#include "TupiProtocols.h"
 
 @class Cell;
 @class Layout;

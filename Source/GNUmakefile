@@ -35,7 +35,6 @@ Tupi_HEADER_FILES = \
 	BasicView.h \
 	CellSpace.h \
 	CellData.h \
-	FDNode.h \
 	TupiProtocols.h \
 	Tupi.h
 

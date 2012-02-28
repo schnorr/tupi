@@ -16,7 +16,22 @@
 */
 #ifndef __TUPIPROTOCOLS_H__
 #define __TUPIPROTOCOLS_H__
-#include "FDNode.h"
+
+@protocol FDNode <NSObject>
+@required
+- (NSPoint) position;
+- (void) setPosition: (NSPoint) newPosition;
+- (NSSet *) connectedNodes;
+- (BOOL) isConnectedTo: (id<FDNode>) n;
+- (void) setParticle: (id)p;
+- (id) particle;
+@optional
+- (void) addConnectedNode: (id<FDNode>) n;
+- (void) removeConnectedNode: (id<FDNode>) n;
+- (void) removeFromAllConnectedNodes;
+- (void) setName: (NSString*) newName;
+- (NSString *) name;
+@end
 
 @protocol TupiProvider <NSObject>
 - (void) layoutChanged;
