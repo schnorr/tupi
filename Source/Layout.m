@@ -164,16 +164,22 @@ double gettime ();
   [mainBox removeParticle: p];
 }
 
-- (void) moveNode: (id<FDNode>) node toLocation: (NSPoint) newLocation
-{
-  Particle *p = [node particle];
-  [p setPosition: newLocation];
-}
-
 - (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName
 {
   Particle *p = [[Particle alloc] initForGraphNode: node
                                           withName: nodeName
+                                        withLayout: self
+                                    andParticleBox: mainBox];
+  [mainBox addParticle: p];
+  [node setParticle: p];
+  [p release];
+}
+
+- (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName withLocation: (NSPoint) loc
+{
+  Particle *p = [[Particle alloc] initForGraphNode: node
+                                          withName: nodeName
+                                      withLocation: loc
                                         withLayout: self
                                     andParticleBox: mainBox];
   [mainBox addParticle: p];

@@ -36,8 +36,9 @@
 
 - (void) freezeNode: (id<FDNode>) node frozen: (BOOL) fr;
 - (void) removeNode: (id<FDNode>) node;
-- (void) moveNode: (id<FDNode>) node toLocation: (NSPoint) newLocation;
 - (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName;
+- (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName withLocation: (NSPoint) loc;
+
 
 - (void) shake;
 - (void) clear;
