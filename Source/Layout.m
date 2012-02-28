@@ -173,8 +173,8 @@ double gettime ();
 - (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName
 {
   Particle *p = [[Particle alloc] initForGraphNode: node
-                                          WithName: nodeName
-                                        WithLayout: self
+                                          withName: nodeName
+                                        withLayout: self
                                     andParticleBox: mainBox];
   [mainBox addParticle: p];
   [node setParticle: p];

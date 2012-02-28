@@ -48,11 +48,11 @@
 - (id) initForGraphNode: (id<FDNode>) gn
                withName: (NSString *)n
            withLocation: (NSPoint)loc
-             WithLayout: (Layout*)pb
+             withLayout: (Layout*)pb
          andParticleBox: (ParticleBox*) b;
 - (id) initForGraphNode: (id<FDNode>) gn
-               WithName: (NSString *)n
-             WithLayout: (Layout*)pb
+               withName: (NSString *)n
+             withLayout: (Layout*)pb
          andParticleBox: (ParticleBox*) b;
 - (NSString*)name;
 - (double) weight;
