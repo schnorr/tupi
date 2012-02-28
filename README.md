@@ -59,6 +59,8 @@ window so you can visually play with the graph. You can:
 * click and drag, changing the portion of the graph that you see
 * use the mouse wheel, zooming in and out to see details
 * move a node by clicking and dragging it
+* right click over a node removes it
+* shake the graph by using the "Shake" option in the menu or ALT+S
 
 Nodes are expected to stop moving after the graph achieves a stable
 placement (defined by the sum of energy of all nodes when they move).
