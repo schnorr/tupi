@@ -56,6 +56,8 @@ double gettime ();
                                              cellData: data];
   energy = [[Energy alloc] init];
   [self setQuality: quality];
+
+  lock = [[NSConditionLock alloc] initWithCondition: 0];
   return self;
 }
 
@@ -111,6 +113,8 @@ double gettime ();
 
 - (void) compute
 {
+  [lock lock];
+
   area = [mainBox boundingBox];
   diagonalOfArea = LMSDiagonalRect (area);
   maxMoveLength = -MAXFLOAT;
@@ -130,6 +134,8 @@ double gettime ();
   [energy store];
   lastStepDuration = t2 - t1;
   time++;
+
+  [lock unlock];
 }
 
 - (NSArray *)allParticles
@@ -154,18 +160,23 @@ double gettime ();
 
 - (void) freezeNode: (id<FDNode>) node frozen: (BOOL) fr
 {
+  [lock lock];
   Particle *p = [node particle];
   [p setFreeze: fr];
+  [lock unlock];
 }
 
 - (void) removeNode: (id<FDNode>) node
 {
+  [lock lock];
   Particle *p = [node particle];
   [mainBox removeParticle: p];
+  [lock unlock];
 }
 
 - (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName
 {
+  [lock lock];
   Particle *p = [[Particle alloc] initForGraphNode: node
                                           withName: nodeName
                                         withLayout: self
@@ -173,10 +184,12 @@ double gettime ();
   [mainBox addParticle: p];
   [node setParticle: p];
   [p release];
+  [lock unlock];
 }
 
 - (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName withLocation: (NSPoint) loc
 {
+  [lock lock];
   Particle *p = [[Particle alloc] initForGraphNode: node
                                           withName: nodeName
                                       withLocation: loc
@@ -185,6 +198,7 @@ double gettime ();
   [mainBox addParticle: p];
   [node setParticle: p];
   [p release];
+  [lock unlock];
 }
 
 - (void) shake

@@ -75,6 +75,8 @@
 
   //settings
   double stabilizationLimit; // stabilisation limit of this algorithm.
+
+  NSConditionLock *lock;
 }
 - (NSArray *)allParticles;
 - (NSRect) boundingBox;
