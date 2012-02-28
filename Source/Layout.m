@@ -171,6 +171,8 @@ double gettime ();
   [lock lock];
   Particle *p = [node particle];
   [mainBox removeParticle: p];
+
+  [energy clear];
   [lock unlock];
 }
 
@@ -184,6 +186,8 @@ double gettime ();
   [mainBox addParticle: p];
   [node setParticle: p];
   [p release];
+
+  [energy clear];
   [lock unlock];
 }
 
@@ -198,12 +202,15 @@ double gettime ();
   [mainBox addParticle: p];
   [node setParticle: p];
   [p release];
+
+  [energy clear];
   [lock unlock];
 }
 
 - (void) shake
 {
   [mainBox shake];
+  [energy clear];
 }
 
 - (void) clear

@@ -48,9 +48,9 @@
 - (void) run: (id) sender
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  double limit = [layout stabilizationLimit];
   while (![[NSThread currentThread] isCancelled]){
     NSAutoreleasePool *looppool = [[NSAutoreleasePool alloc] init];
+    double limit = [layout stabilizationLimit];
     double current = [layout stabilization];
     if (current > limit){
       [self sleep: 0.08];
