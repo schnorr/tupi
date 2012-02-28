@@ -44,8 +44,8 @@
              withLayout: (Layout*)pb
          andParticleBox: (ParticleBox*) b
 {
-  NSPoint loc = NSMakePoint (drand48() * 2 * layout->k - layout->k,
-                             drand48() * 2 * layout->k - layout->k);
+  NSPoint loc = NSMakePoint (drand48() * 2 * pb->k - pb->k,
+                             drand48() * 2 * pb->k - pb->k);
   return [self initForGraphNode: gn
                        withName: n
                    withLocation: loc
