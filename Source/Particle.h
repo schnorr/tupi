@@ -46,6 +46,11 @@
   id<FDNode> graphNode;
 }
 - (id) initForGraphNode: (id<FDNode>) gn
+               withName: (NSString *)n
+           withLocation: (NSPoint)loc
+             WithLayout: (Layout*)pb
+         andParticleBox: (ParticleBox*) b;
+- (id) initForGraphNode: (id<FDNode>) gn
                WithName: (NSString *)n
              WithLayout: (Layout*)pb
          andParticleBox: (ParticleBox*) b;

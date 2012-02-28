@@ -19,7 +19,8 @@
 
 @implementation Particle
 - (id) initForGraphNode: (id<FDNode>) gn
-               WithName: (NSString *)n
+               withName: (NSString *)n
+           withLocation: (NSPoint)loc
              WithLayout: (Layout*)pb
          andParticleBox: (ParticleBox*) b
 {
@@ -30,12 +31,26 @@
   box = b;
   frozen = NO;
   weight = 1;
-  pos = NSMakePoint (drand48() * 2 * layout->k - layout->k,
-                     drand48() * 2 * layout->k - layout->k);
+  pos = loc;
   graphNode = gn;
   [graphNode retain];
   [graphNode setPosition: pos];
   return self;
+}
+
+
+- (id) initForGraphNode: (id<FDNode>) gn
+               WithName: (NSString *)n
+             WithLayout: (Layout*)pb
+         andParticleBox: (ParticleBox*) b
+{
+  NSPoint loc = NSMakePoint (drand48() * 2 * layout->k - layout->k,
+                             drand48() * 2 * layout->k - layout->k);
+  return [self initForGraphNode: gn
+                       withName: n
+                   withLocation: loc
+                     withLayout: pb
+                 andParticleBox: b];
 }
 
 - (void) dealloc
