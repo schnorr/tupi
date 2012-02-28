@@ -58,6 +58,22 @@
   }
 }
 
+- (void) removeConnectedNode: (GraphNode *) n
+{
+  if ([n isKindOfClass: [GraphNode class]]){
+    [connected removeObject: n];
+  }
+}
+
+- (void) removeFromAllConnectedNodes
+{
+  NSEnumerator *en = [connected objectEnumerator];
+  GraphNode *g;
+  while ((g = [en nextObject])){
+    [g removeConnectedNode: self];
+  }
+}
+
 - (BOOL) isConnectedTo: (GraphNode *) n
 {
   return [connected containsObject: n];
