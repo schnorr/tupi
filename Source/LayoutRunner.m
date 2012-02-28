@@ -57,7 +57,6 @@
     }else{
       [layout compute];
       [provider layoutChanged];
-      [self sleep: 0.01];
     }
     [looppool release];
   }
