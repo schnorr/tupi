@@ -28,7 +28,6 @@
 - (long) numberOfMovedNodes;
 - (double) stabilization;
 - (double) stabilizationLimit;
-- (NSTimeInterval) lastStepDuration;
 - (int) quality;
 - (void) setQuality: (int) q;
 - (double) force;
@@ -66,7 +65,6 @@
 
   //statistics
   int time; // Current step.
-  double lastStepDuration;
   NSRect area;
   double diagonalOfArea; // the diagonal of the graph area at the current step.
   double maxMoveLength; // The maximum length of a node displacement at the current step.

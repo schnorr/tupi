@@ -17,8 +17,6 @@
 #include "Layout.h"
 #include "NSPointFunctions.h"
 
-double gettime ();
-
 #ifndef MAXFLOAT
 #define MAXFLOAT ((float)3.402823466e+38F)
 #endif
@@ -38,7 +36,6 @@ double gettime ();
   nodesPerCell = 10;
 
   time = 0;
-  lastStepDuration = 0;
   area = NSZeroRect;
   diagonalOfArea = 0;
   maxMoveLength = 0;
@@ -72,11 +69,6 @@ double gettime ();
 - (double) stabilizationLimit
 {
   return stabilizationLimit;
-}
-
-- (NSTimeInterval) lastStepDuration
-{
-  return lastStepDuration;
 }
 
 - (int) quality
@@ -121,16 +113,13 @@ double gettime ();
   numberOfMovedNodes = 0;
   averageLength = 0;
 
-  double t1 = gettime();
   [mainBox step];
-  double t2 = gettime();
 
   if (numberOfMovedNodes > 0)
     averageLength /= numberOfMovedNodes;
 
   // Ready for the next step.
   [energy store];
-  lastStepDuration = t2 - t1;
   time++;
 
   [lock unlock];
