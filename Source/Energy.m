@@ -39,7 +39,8 @@
 
 - (void) store
 {
-  [energies addObject: [NSNumber numberWithDouble: accumulator]];
+  NSNumber *last = [NSNumber numberWithDouble: accumulator];
+  [energies addObject: last];
   if ([energies count] > length){
     [energies removeObjectAtIndex: 0];
   }
@@ -48,7 +49,13 @@
 
 - (void) clear
 {
-  [energies removeAllObjects];
+  int i;
+  //why 200?
+  for (i = 0; i < 200; i++){
+    if ([energies count]){
+      [energies removeObjectAtIndex: 0];
+    }
+  }
   accumulator = 0;
 }
 
@@ -57,8 +64,8 @@
   NSEnumerator *en;
   NSNumber *number;
 
-  //not enough samples? (minimum of 10, why?)
-  if ([energies count] < 10){
+  //not enough samples? (minimum of 128, why?)
+  if ([energies count] < 128){
     return 0;
   }
 
