@@ -54,9 +54,6 @@ extern double gettime();
   [transform concat];
 
 
-  [[NSColor blackColor] set];
-  [[NSBezierPath bezierPathWithRect: NSMakeRect(-10, -10, 20, 20)] fill];
-
 
   NSRect rootCellBB = [provider boundingBox];
   rootCellBB.origin = LMSMultiplyPoint (rootCellBB.origin, 100);
