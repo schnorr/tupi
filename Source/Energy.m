@@ -21,7 +21,6 @@
 {
   self = [super init];
   energies = [[NSMutableArray alloc] init];
-  energy = 0;
   accumulator = 0;
   length = 256;
   return self;
@@ -44,20 +43,13 @@
   if ([energies count] > length){
     [energies removeObjectAtIndex: 0];
   }
-  energy = accumulator;
   accumulator = 0;
 }
 
 - (void) clear
 {
   [energies removeAllObjects];
-  energy = 0;
   accumulator = 0;
-}
-
-- (double) energy
-{
-  return energy;
 }
 
 - (double) stabilization

@@ -21,14 +21,12 @@
 @interface Energy : NSObject
 {
   NSMutableArray *energies;
-  double energy;
   double accumulator;
   int length;
 }
 - (void) add: (double) e;
 - (void) store;
 - (void) clear;
-- (double) energy;
 - (double) stabilization;
 @end
 
