@@ -15,8 +15,14 @@
     along with Tupi.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "ParticleBox.h"
+#include <sys/time.h>
 
-extern double gettime();
+static double gettime (void)
+{
+  struct timeval tr;
+  gettimeofday(&tr, NULL);
+  return (double)tr.tv_sec+(double)tr.tv_usec/1000000;
+}
 
 @implementation ParticleBox
 - (id) init
