@@ -115,6 +115,7 @@
   }
   [window makeKeyAndOrderFront: self];
   [window setDelegate: self];
+  [window setAcceptsMouseMovedEvents:YES];
   [view setProvider: self];
   [view setLayout: layout];
   [view setNeedsDisplay: YES];

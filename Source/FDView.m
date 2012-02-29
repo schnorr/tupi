@@ -30,6 +30,11 @@ extern double gettime();
   return self;
 }
 
+- (BOOL)acceptsFirstResponder
+{
+  return YES;
+}
+
 - (void) setProvider: (Tupi *) p
 {
   provider = p;
