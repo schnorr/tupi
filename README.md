@@ -61,6 +61,7 @@ window so you can visually play with the graph. You can:
 * move a node by clicking and dragging it
 * right click over a node removes it
 * shake the graph by using the "Shake" option in the menu or ALT+S
+* reset the graph by using the "Reset" option in the menu or ALT+R
 
 Nodes are expected to stop moving after the graph achieves a stable
 placement (defined by the sum of energy of all nodes when they move).

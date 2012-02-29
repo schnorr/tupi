@@ -148,6 +148,16 @@
   [layout shake];
 }
 
+- (void) reset: (id) reset
+{
+  NSEnumerator *en = [self graphNodesEnumerator];
+  GraphNode *node;
+  while ((node = [en nextObject])){
+    [self removeNode: node];
+  }
+  [self loadAllNodesFromFile: dotFile];
+}
+
 - (void) removeNode: (id<FDNode>) g
 {
   //disconnect the node from all connected nodes
