@@ -17,11 +17,10 @@
 #ifndef __PARTICLEBOX_H__
 #define __PARTICLEBOX_H__
 #include <Foundation/Foundation.h>
-#include "CellSpace.h"
-#include "CellData.h"
 #include "Cell.h"
-#include "NTree.h"
 #include "Particle.h"
+#include "QuadTreeCellSpace.h"
+#include "BarycenterCellData.h"
 
 @class NTree;
 @class Cell;
@@ -34,8 +33,8 @@
   long time; //current time step
 }
 - (id) initWithNodesPerCell: (int)pmax
-                  cellSpace: (id<CellSpace>) space
-                   cellData: (id<CellData>) data;
+                  cellSpace: (QuadTreeCellSpace *) space
+                   cellData: (BarycenterCellData *) data;
 - (NSRect) boundingBox;
 - (void) step; //one iteration
 - (NSArray*) allParticles;

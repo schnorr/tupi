@@ -33,8 +33,6 @@ Tupi_HEADER_FILES = \
 	BarycenterCellData.h \
 	Energy.h \
 	BasicView.h \
-	CellSpace.h \
-	CellData.h \
 	TupiProtocols.h \
 	Tupi.h
 

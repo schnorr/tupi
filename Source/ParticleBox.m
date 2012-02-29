@@ -26,8 +26,8 @@ extern double gettime();
 }
 
 - (id) initWithNodesPerCell: (int)pmax
-                  cellSpace: (id<CellSpace>) space
-                   cellData: (id<CellData>) data
+                  cellSpace: (QuadTreeCellSpace *) space
+                   cellData: (BarycenterCellData *) data
 {
   self = [super init];
   tree = [[NTree alloc] initRootTreeWithNodesPerCell:pmax

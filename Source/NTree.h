@@ -17,9 +17,8 @@
 #ifndef __NTREE_H__
 #define __NTREE_H__
 #include <Foundation/Foundation.h>
-#include "Cell.h"
-#include "ParticleBox.h"
 #include "QuadTreeCellSpace.h"
+#include "BarycenterCellData.h"
 
 @class ParticleBox;
 @class Cell;
@@ -38,8 +37,8 @@ enum OutOfUniverseMode {Delete, Resize};
   NSPoint maxPointForResize;
 }
 - (id) initRootTreeWithNodesPerCell: (int)pmax
-                          cellSpace: (id<CellSpace>)space
-                           cellData: (id<CellData>) data
+                          cellSpace: (QuadTreeCellSpace *)space
+                           cellData: (BarycenterCellData *) data
                         particleBox: (ParticleBox*) pb;
 - (NSRect) boundingBox;
 - (void) checkDivisions;
@@ -52,4 +51,6 @@ enum OutOfUniverseMode {Delete, Resize};
 - (Cell*) rootCell;
 @end
 
+#include "Cell.h"
+#include "ParticleBox.h"
 #endif

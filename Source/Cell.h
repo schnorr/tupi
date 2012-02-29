@@ -17,10 +17,10 @@
 #ifndef __CELL_H__
 #define __CELL_H__
 #include <Foundation/Foundation.h>
-#include "NTree.h"
 #include "QuadTreeCellSpace.h"
 #include "BarycenterCellData.h"
 #include "Particle.h"
+#include "NTree.h"
 
 @class NTree;
 @class Particle;

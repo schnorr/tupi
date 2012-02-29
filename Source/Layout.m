@@ -47,10 +47,8 @@ double gettime ();
 
   stabilizationLimit = 0.9;
 
-  id<CellSpace> space;
-  id<CellData> data;
-  space = [[QuadTreeCellSpace alloc] initWithBB: NSMakeRect(-10, -10, 20, 20)];
-  data = [[BarycenterCellData alloc] init];
+  QuadTreeCellSpace *space = [[QuadTreeCellSpace alloc] initWithBB: NSMakeRect(-10, -10, 20, 20)];
+  BarycenterCellData *data = [[BarycenterCellData alloc] init];
   mainBox = [[ParticleBox alloc] initWithNodesPerCell: nodesPerCell
                                             cellSpace: space
                                              cellData: data];

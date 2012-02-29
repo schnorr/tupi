@@ -17,13 +17,10 @@
 #ifndef __BARYCENTERCELLDATA_H__
 #define __BARYCENTERCELLDATA_H__
 #include <Foundation/Foundation.h>
-#include "CellData.h"
-#include "Cell.h"
 
 @class Cell;
-@class BarycenterCellData;
 
-@interface BarycenterCellData : NSObject <CellData>
+@interface BarycenterCellData : NSObject
 {
   NSPoint center;
   double weight;
@@ -33,5 +30,10 @@
 - (double) weight;
 - (Cell *) cell;
 - (double) distanceFromPosition: (NSPoint)pos;
+- (void) recompute;
+- (void) setCell: (Cell *) c;
+- (BarycenterCellData*) newCellData;
 @end
+
+#include "Cell.h"
 #endif

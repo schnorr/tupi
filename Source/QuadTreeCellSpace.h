@@ -17,12 +17,24 @@
 #ifndef __QUADTREECELLSPACE_H__
 #define __QUADTREECELLSPACE_H__
 #include <Foundation/Foundation.h>
-#include "CellSpace.h"
-#include "Particle.h"
+
+@class Particle;
+
+@protocol CellSpace
+- (id) initWithBB: (NSRect) b;
+- (int) getDivisions;
+- (id) newSubCellSpace: (int) i;
+- (BOOL) containsParticle: (Particle *) particle;
+- (NSRect) bb;
+- (void) setBB: (NSRect) b;
+- (double) size;
+@end
 
 @interface QuadTreeCellSpace : NSObject <CellSpace>
 {
   NSRect bb;
 }
 @end
+
+#include "Particle.h"
 #endif

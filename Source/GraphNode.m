@@ -51,14 +51,14 @@
   return connected;
 }
 
-- (void) addConnectedNode: (GraphNode*) n
+- (void) addConnectedNode: (id<FDNode>) n
 {
   if ([n isKindOfClass: [GraphNode class]]){
     [connected addObject: n];
   }
 }
 
-- (void) removeConnectedNode: (GraphNode *) n
+- (void) removeConnectedNode: (id<FDNode>) n
 {
   if ([n isKindOfClass: [GraphNode class]]){
     [connected removeObject: n];
@@ -74,7 +74,7 @@
   }
 }
 
-- (BOOL) isConnectedTo: (GraphNode *) n
+- (BOOL) isConnectedTo: (id<FDNode>) n
 {
   return [connected containsObject: n];
 }
