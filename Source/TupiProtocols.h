@@ -33,6 +33,9 @@
 - (NSString *) name;
 @end
 
+@protocol TupiNode <FDNode>
+@end
+
 @protocol TupiProvider <NSObject>
 - (void) layoutChanged;
 @end
