@@ -71,7 +71,6 @@ window so you can visually play with the graph. You can:
 
 Nodes are expected to stop moving after the graph achieves a stable
 placement (defined by the sum of energy of all nodes when they move).
-After that, the only thing you can do (for now) is stop the program.
 
 Roadmap
 -------
