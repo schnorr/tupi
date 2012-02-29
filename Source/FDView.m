@@ -53,16 +53,15 @@ extern double gettime();
   NSAffineTransform* transform = [self transform];
   [transform concat];
 
-
-
-  NSRect rootCellBB = [provider boundingBox];
-  rootCellBB.origin = LMSMultiplyPoint (rootCellBB.origin, 100);
-  rootCellBB.size.width *= 100;
-  rootCellBB.size.height *= 100;
-  NSBezierPath *bbpath = [NSBezierPath bezierPathWithRect: rootCellBB];
-  [[NSColor greenColor] set];
-  [bbpath stroke];
-
+  if ([provider barnesHutCells]){
+    NSRect rootCellBB = [provider boundingBox];
+    rootCellBB.origin = LMSMultiplyPoint (rootCellBB.origin, 100);
+    rootCellBB.size.width *= 100;
+    rootCellBB.size.height *= 100;
+    NSBezierPath *bbpath = [NSBezierPath bezierPathWithRect: rootCellBB];
+    [[NSColor greenColor] set];
+    [bbpath stroke];
+  }
 
   NSEnumerator *en = [provider graphNodesEnumerator];
   GraphNode *node;
