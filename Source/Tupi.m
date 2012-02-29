@@ -46,7 +46,29 @@
     NSLog (@"Usage: %@ <graphviz_dot_file>", [args objectAtIndex: 0]);
     [[NSApplication sharedApplication] terminate:self];
   }
-  NSString *dot = [args objectAtIndex: 1];
+
+  //allocate space to keep all loaded graph nodes from file
+  graph = [[NSMutableDictionary alloc] init];
+
+  //allocate the particle system
+  layout = [[Layout alloc] init];
+
+  //read all nodes from file, put them in the particle system
+  [dotFile = [args objectAtIndex: 1] retain];
+  [self loadAllNodesFromFile: dotFile];
+
+  //run the particle system runner
+  layoutRunner = [[LayoutRunner alloc] init];
+  [layoutRunner setLayout: layout];
+  [layoutRunner setProvider: self];
+  thread = [[NSThread alloc] initWithTarget: layoutRunner
+                                   selector: @selector(run:)
+                                     object: nil];
+  [thread start];
+}
+
+- (void) loadAllNodesFromFile: (NSString *) dot
+{
   FILE *file = fopen ([dot cString], "r");
   if (!file){
     NSLog (@"Could not open file %@", dot);
@@ -59,7 +81,6 @@
   }
 
   //reading nodes/edges
-  graph = [[NSMutableDictionary alloc] init];
   Agnode_t *n1 = agfstnode (g);
   while (n1){
     NSString *name1 = [NSString stringWithFormat: @"%s", n1->name];
@@ -91,21 +112,12 @@
   }
   agclose(g);
 
-  //Here
-  layout = [[Layout alloc] init];
-  NSEnumerator *en = [graph objectEnumerator];
+  //add all loaded nodes to the particle system
+  NSEnumerator *en = [self graphNodesEnumerator];
   GraphNode *n;
   while ((n = [en nextObject])){
     [layout addNode: n withName: [n name]];
   }
-
-  layoutRunner = [[LayoutRunner alloc] init];
-  [layoutRunner setLayout: layout];
-  [layoutRunner setProvider: self];
-  thread = [[NSThread alloc] initWithTarget: layoutRunner
-                                   selector: @selector(run:)
-                                     object: nil];
-  [thread start];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *)not

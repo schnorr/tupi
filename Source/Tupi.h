@@ -29,6 +29,7 @@
 {
   id window;
   id view;
+  NSString *dotFile;
   NSMutableDictionary *graph;
   Layout *layout;
   LayoutRunner *layoutRunner;
@@ -37,6 +38,7 @@
 - (NSEnumerator *) graphNodesEnumerator;
 - (NSEnumerator *) particlesEnumerator;
 - (NSRect) boundingBox;
+- (void) loadAllNodesFromFile: (NSString *) file;
 - (void) removeNode: (id<FDNode>) node;
 - (void) startMovingNode: (id<FDNode>) node;
 - (void) moveNode: (id<FDNode>) node toLocation: (NSPoint) newLocation;
