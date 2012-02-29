@@ -99,20 +99,20 @@ extern double gettime();
   }
 
 
-
-  en = [provider particlesEnumerator];
-  Particle *p;
-  while ((p = [en nextObject])){
-    //draw the cell
-    NSRect cellRect = [[[p cell] space] bb];
-    cellRect.origin = LMSMultiplyPoint (cellRect.origin, 100);
-    cellRect.size.width *= 100;
-    cellRect.size.height *= 100;
-    NSBezierPath *p2 = [NSBezierPath bezierPathWithRect: cellRect];
-    [[NSColor yellowColor] set];
-    [p2 stroke];
+  if ([provider barnesHutCells]){
+    en = [provider particlesEnumerator];
+    Particle *p;
+    while ((p = [en nextObject])){
+      //draw the cell
+      NSRect cellRect = [[[p cell] space] bb];
+      cellRect.origin = LMSMultiplyPoint (cellRect.origin, 100);
+      cellRect.size.width *= 100;
+      cellRect.size.height *= 100;
+      NSBezierPath *p2 = [NSBezierPath bezierPathWithRect: cellRect];
+      [[NSColor yellowColor] set];
+      [p2 stroke];
+    }
   }
-
 
   [transform invert];
   [transform concat];

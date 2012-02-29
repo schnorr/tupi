@@ -34,6 +34,8 @@
   Layout *layout;
   LayoutRunner *layoutRunner;
   NSThread *thread;
+
+  BOOL showBarnesHutCells;
 }
 - (NSEnumerator *) graphNodesEnumerator;
 - (NSEnumerator *) particlesEnumerator;
@@ -43,5 +45,7 @@
 - (void) startMovingNode: (id<FDNode>) node;
 - (void) moveNode: (id<FDNode>) node toLocation: (NSPoint) newLocation;
 - (void) stopMovingNode: (id<FDNode>) node;
+
+- (BOOL) barnesHutCells;
 @end
 #endif

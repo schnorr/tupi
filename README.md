@@ -62,6 +62,7 @@ window so you can visually play with the graph. You can:
 * right click over a node removes it
 * shake the graph by using the "Shake" option in the menu or ALT+S
 * reset the graph by using the "Reset" option in the menu or ALT+R
+* show the barnes-hut cells by using the option in the menu or ALT+C
 
 Nodes are expected to stop moving after the graph achieves a stable
 placement (defined by the sum of energy of all nodes when they move).

@@ -65,6 +65,9 @@
                                    selector: @selector(run:)
                                      object: nil];
   [thread start];
+
+  //default for showing cells
+  showBarnesHutCells = NO;
 }
 
 - (void) loadAllNodesFromFile: (NSString *) dot
@@ -148,7 +151,7 @@
   [layout shake];
 }
 
-- (void) reset: (id) reset
+- (void) reset: (id) sender
 {
   NSEnumerator *en = [self graphNodesEnumerator];
   GraphNode *node;
@@ -156,6 +159,12 @@
     [self removeNode: node];
   }
   [self loadAllNodesFromFile: dotFile];
+}
+
+- (void) cells: (id) sender
+{
+  showBarnesHutCells = !showBarnesHutCells;
+  [view setNeedsDisplay: YES];
 }
 
 - (void) removeNode: (id<FDNode>) g
@@ -191,5 +200,10 @@
 - (void) stopMovingNode: (id<FDNode>) node
 {
   [layout freezeNode: node frozen: NO];
+}
+
+- (BOOL) barnesHutCells
+{
+  return showBarnesHutCells;
 }
 @end
