@@ -46,9 +46,14 @@ Examples
 
 Tupi uses dot files (in the graphviz's dot file format) as
 input. There are some examples in the `Examples` directory. If you
-want to give a try, type:
+want to give a try, without installing the tupi tool, type:
 
+    $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/Source/Tupi.framework/Versions/Current
     $ ./Source/tupi.app/tupi Examples/teste.dot
+
+And, if you installed the tool, just type:
+
+    $ tupi your_graphviz_file.dot
 
 Interactions
 ------------
