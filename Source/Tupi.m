@@ -186,13 +186,7 @@
 
 - (void) moveNode: (id<FDNode>) node toLocation: (NSPoint) newLocation
 {
-  //remove the corresponding particle from the layout
-  [layout removeNode: node];
-
-  //add the particle again, forcing it to the new location
-  [layout addNode: node
-         withName: [node name]
-     withLocation: newLocation];
+  [layout moveNode: node toLocation: newLocation];
   [layout freezeNode: node frozen: YES];
   return;
 }

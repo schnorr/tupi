@@ -37,6 +37,7 @@
 - (void) removeNode: (id<FDNode>) node;
 - (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName;
 - (void) addNode: (id<FDNode>) node withName: (NSString *) nodeName withLocation: (NSPoint) loc;
+- (void) moveNode: (id<FDNode>) node toLocation: (NSPoint) loc;
 
 
 - (void) shake;

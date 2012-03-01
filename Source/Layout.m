@@ -194,6 +194,17 @@
   [lock unlock];
 }
 
+- (void) moveNode: (id<FDNode>) node toLocation: (NSPoint) loc
+{
+  //remove the corresponding particle from the layout
+  [self removeNode: node];
+
+  //add the particle again, forcing it to the new location
+  [self addNode: node
+         withName: [node name]
+     withLocation: loc];
+}
+
 - (void) shake
 {
   [mainBox shake];
