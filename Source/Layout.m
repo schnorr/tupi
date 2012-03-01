@@ -202,6 +202,8 @@
 
 - (void) clear
 {
+  [energy clear];
+  [mainBox removeAllParticles];
 }
 
 @end
