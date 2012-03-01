@@ -155,8 +155,8 @@ static double gettime (void)
     [tree removeParticle: pRemoved];
     [pRemoved setParticleBox: nil];
     [pRemoved setCell: nil];
-    [particles removeObjectForKey: [p description]];
     [pRemoved removed];
+    [particles removeObjectForKey: [p description]];
   }
 }
 
