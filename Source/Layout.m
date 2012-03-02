@@ -203,6 +203,9 @@
   [self addNode: node
          withName: [node name]
      withLocation: loc];
+
+  //freeze the particle that was just added
+  [self freezeNode: node frozen: YES];
 }
 
 - (void) list
