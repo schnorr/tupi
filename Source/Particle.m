@@ -139,11 +139,12 @@
 
 - (void) attraction
 {
-  int connected = [[graphNode connectedNodes] count];
+  NSSet *connectedNodes = [graphNode connectedNodes];
+  int connected = [connectedNodes count];
   if (connected == 0){
     return;
   }
-  NSEnumerator *en = [[graphNode connectedNodes] objectEnumerator];
+  NSEnumerator *en = [connectedNodes objectEnumerator];
   id<FDNode> node;
 
   NSPoint attractionDisp = NSZeroPoint;
@@ -160,6 +161,8 @@
     double distance = LMSDistanceBetweenPoints (n1p, n2p);
     NSPoint normalized = LMSNormalizePoint(dif);
     double factor = (layout->K1 * (distance - layout->k));
+    factor /= connected * 0.1;
+
     attractionDisp = NSAddPoints (attractionDisp, LMSMultiplyPoint(normalized, -factor));
     attE += factor;
     [[layout energy] add: factor];
