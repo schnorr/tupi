@@ -205,6 +205,16 @@
      withLocation: loc];
 }
 
+- (void) list
+{
+  NSLog (@"There are %lu particles:", [[self allParticles] count]);
+  NSEnumerator *en = [[self allParticles] objectEnumerator];
+  Particle *p;
+  while ((p = [en nextObject])){
+    NSLog (@"%@ connected to %@", [p name], [p->graphNode allConnectedNodes]);
+  }
+}
+
 - (void) shake
 {
   [mainBox shake];
