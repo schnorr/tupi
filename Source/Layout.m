@@ -214,7 +214,7 @@
   NSEnumerator *en = [[self allParticles] objectEnumerator];
   Particle *p;
   while ((p = [en nextObject])){
-    NSLog (@"%@ connected to %@", [p name], [p->graphNode allConnectedNodes]);
+    NSLog (@"%@ connected to %@", [p name], [p->graphNode connectedNodes]);
   }
 }
 
