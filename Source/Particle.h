@@ -43,6 +43,7 @@
   double weight; //the particle importance
 
   //this particle represents a graph node
+  @public
   id<FDNode> graphNode;
 }
 - (id) initForGraphNode: (id<FDNode>) gn
