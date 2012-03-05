@@ -146,6 +146,20 @@
 {
 }
 
+- (void) thread: (id) sender
+{
+  if (thread != nil && [thread isExecuting]){
+    [thread cancel];
+    [thread release];
+    thread = nil;
+  }else{
+    thread = [[NSThread alloc] initWithTarget: layoutRunner
+                                     selector: @selector(run:)
+                                       object: self];
+    [thread start];
+  }
+}
+
 - (void) shake: (id) sender
 {
   [layout shake];

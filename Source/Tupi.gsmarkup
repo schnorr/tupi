@@ -20,6 +20,7 @@
       <menuItem title="Show Barnes-Hut cells" action="cells:" keyEquivalent="c" />
       <menuItem title="Reset" action="reset:" keyEquivalent="r" />
       <menuItem title="Shake" action="shake:" keyEquivalent="s" />
+      <menuItem title="Stop/Start Thread" action="thread:" keyEquivalent="t" />
       <menuItem title="Hide" action="hide:" keyEquivalent="h" />
       <menuItem title="Quit" action="terminate:" keyEquivalent="q" />
     </menu>
