@@ -32,14 +32,6 @@
   frozen = NO;
   weight = 1;
   pos = loc;
-  if (NSEqualPoints (pos, NSZeroPoint)){
-    pos = NSMakePoint (drand48() * 2 * pb->k - pb->k,
-                       drand48() * 2 * pb->k - pb->k);
-  }else{
-    NSPoint variation = NSMakePoint (drand48() * loc.x * 0.5,
-                                   drand48() * loc.y * 0.5);
-    pos = NSAddPoints (pos, variation);
-  }
   graphNode = gn;
   [graphNode retain];
   [graphNode setPosition: pos];
