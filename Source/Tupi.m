@@ -63,7 +63,7 @@
   [layoutRunner setProvider: self];
   thread = [[NSThread alloc] initWithTarget: layoutRunner
                                    selector: @selector(run:)
-                                     object: nil];
+                                     object: self];
   [thread start];
 
   //default for showing cells
