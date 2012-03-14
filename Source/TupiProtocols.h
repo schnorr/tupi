@@ -22,10 +22,10 @@
 - (NSPoint) position;
 - (void) setPosition: (NSPoint) newPosition;
 - (NSSet *) connectedNodes;
-- (BOOL) isConnectedTo: (id<FDNode>) n;
 - (void) setParticle: (id)p;
 - (id) particle;
 @optional
+- (BOOL) isConnectedTo: (id<FDNode>) n;
 - (void) addConnectedNode: (id<FDNode>) n;
 - (void) removeConnectedNode: (id<FDNode>) n;
 - (void) removeFromAllConnectedNodes;
