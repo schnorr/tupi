@@ -14,7 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with Tupi.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <Renaissance/Renaissance.h>
 #include <Foundation/Foundation.h>
+#include <Renaissance/Renaissance.h>
 #include <AppKit/AppKit.h>
 #include <sys/time.h>
 #include <graphviz/types.h>

@@ -17,6 +17,7 @@
 #ifndef __GRAPHNODE_H__
 #define __GRAPHNODE_H__
 #include <Foundation/Foundation.h>
+#include <Renaissance/Renaissance.h>
 #include "Particle.h"
 #include "TupiProtocols.h"
 

@@ -17,6 +17,7 @@
 #ifndef __FDVIEW__H__
 #define __FDVIEW__H__
 #include <AppKit/AppKit.h>
+#include <Renaissance/Renaissance.h>
 #include "BasicView.h"
 #include "Tupi.h"
 #include "GraphNode.h"

@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with Tupi.  If not, see <http://www.gnu.org/licenses/>.
 */
+#include <Renaissance/Renaissance.h>
 #include "Tupi.h"
 #include "GraphNode.h"
 
