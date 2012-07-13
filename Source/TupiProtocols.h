@@ -18,12 +18,14 @@
 #define __TUPIPROTOCOLS_H__
 
 @protocol FDNode <NSObject>
+//required methods
 - (NSPoint) position;
 - (void) setPosition: (NSPoint) newPosition;
 - (NSSet *) connectedNodes;
 - (void) setParticle: (id)p;
 - (id) particle;
 - (NSString *) name;
+//optional
 - (BOOL) isConnectedTo: (id<FDNode>) n;
 - (void) addConnectedNode: (id<FDNode>) n;
 - (void) removeConnectedNode: (id<FDNode>) n;
