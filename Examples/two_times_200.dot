@@ -1,7 +1,4 @@
 graph test {
-  graph [overlap=scale]
-  node [shape=box, style=filled]
-  node [width=.3, height=.3, style=filled, color=skyblue]
 
   "alice181.crepe.fr";
   "alice_cluster_link_181_UP";
