@@ -18,6 +18,8 @@
 #include "Tupi.h"
 #include "GraphNode.h"
 
+int (*linkRenaissanceIn)(int, const char **) = GSMarkupApplicationMain;
+
 @implementation Tupi
 - (NSEnumerator *) graphNodesEnumerator
 {
