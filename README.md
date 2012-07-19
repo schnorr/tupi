@@ -79,4 +79,4 @@ Roadmap
 * Allow the user to change the several parameters of the placement algorithm
   to fine-tune the algorithm according to the graph
 * Increase the scalability of the algorithm implementation
-* Document the different interactions within the application
+* Create a short documentation inside the application itself
